@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ============== HOME ============== -->
+  <url>
+    <loc>https://teknokerja.com/</loc>
+    <lastmod>2026-05-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://teknokerja.com/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://teknokerja.com/id"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://teknokerja.com/ru"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://teknokerja.com/zh"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://teknokerja.com/"/>
+  </url>
+  <url><loc>https://teknokerja.com/id</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknokerja.com/ru</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://teknokerja.com/zh</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+
+  <!-- ============== SEWA LAPTOP / RENTAL ============== -->
+  <url>
+    <loc>https://teknokerja.com/sewa-laptop</loc>
+    <lastmod>2026-05-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://teknokerja.com/sewa-laptop"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://teknokerja.com/id/sewa-laptop"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://teknokerja.com/ru/sewa-laptop"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://teknokerja.com/zh/sewa-laptop"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://teknokerja.com/sewa-laptop"/>
+  </url>
+  <url><loc>https://teknokerja.com/id/sewa-laptop</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://teknokerja.com/ru/sewa-laptop</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://teknokerja.com/zh/sewa-laptop</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.75</priority></url>
+
+  <!-- ============== HOW IT WORKS ============== -->
+  <url>
+    <loc>https://teknokerja.com/how-it-works</loc>
+    <lastmod>2026-05-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://teknokerja.com/how-it-works"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://teknokerja.com/id/how-it-works"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://teknokerja.com/ru/how-it-works"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://teknokerja.com/zh/how-it-works"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://teknokerja.com/how-it-works"/>
+  </url>
+  <url><loc>https://teknokerja.com/id/how-it-works</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknokerja.com/ru/how-it-works</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknokerja.com/zh/how-it-works</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- ============== FAQ ============== -->
+  <url>
+    <loc>https://teknokerja.com/faq</loc>
+    <lastmod>2026-05-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://teknokerja.com/faq"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://teknokerja.com/id/faq"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://teknokerja.com/ru/faq"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://teknokerja.com/zh/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://teknokerja.com/faq"/>
+  </url>
+  <url><loc>https://teknokerja.com/id/faq</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknokerja.com/ru/faq</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknokerja.com/zh/faq</loc><lastmod>2026-05-02</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- ============== LAPTOP STOCK ============== -->
+  <url>
+    <loc>https://teknokerja.com/laptop-stock</loc>
+    <lastmod>2026-05-02</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://teknokerja.com/laptop-stock"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://teknokerja.com/id/laptop-stock"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://teknokerja.com/ru/laptop-stock"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://teknokerja.com/zh/laptop-stock"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://teknokerja.com/laptop-stock"/>
+  </url>
+  <url><loc>https://teknokerja.com/id/laptop-stock</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknokerja.com/ru/laptop-stock</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknokerja.com/zh/laptop-stock</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+
+  <!-- ============== TENTANG / ABOUT ============== -->
+  <url><loc>https://teknokerja.com/tentang</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://teknokerja.com/id/tentang</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teknokerja.com/ru/tentang</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://teknokerja.com/zh/tentang</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- ============== KONTAK / CONTACT ============== -->
+  <url><loc>https://teknokerja.com/kontak</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknokerja.com/id/kontak</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://teknokerja.com/ru/kontak</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <url><loc>https://teknokerja.com/zh/kontak</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.55</priority></url>
+
+  <!-- ============== TERMS ============== -->
+  <url><loc>https://teknokerja.com/syarat-ketentuan</loc><lastmod>2026-05-02</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
+
+</urlset>

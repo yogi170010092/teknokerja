@@ -1,0 +1,10 @@
+{
+  "routes": [
+    { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
+    { "src": "/robots.txt", "dest": "/robots.txt" },
+    { "src": "/llms.txt", "dest": "/llms.txt" },
+    { "src": "/favicon.ico", "dest": "/favicon.ico" },
+    { "src": "/(.*\\.(?:png|jpg|jpeg|svg|gif|webp|ico|txt|xml|json|js|css|woff|woff2|ttf|map))", "dest": "/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}

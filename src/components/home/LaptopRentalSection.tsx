@@ -3,19 +3,21 @@ import { Link } from "react-router-dom";
 import { MessageCircle, Laptop, Building, Users, ArrowRight, MapPin } from "lucide-react";
 import { useScrollZoom } from "@/hooks/useScrollZoom";
 import Hero3DCard from "./Hero3DCard";
-import RotatingText from "./RotatingText";
 import FloatingElement from "./FloatingElement";
 import CursorParticles from "@/components/interactive/CursorParticles";
 import ImmersiveBackground from "@/components/interactive/ImmersiveBackground";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { useReadyLaptopCount } from "@/hooks/useReadyLaptopCount";
 
-const WHATSAPP_NUMBER = "6283891088084";
-const WHATSAPP_MESSAGE = "Halo, saya tertarik sewa laptop TeknoKerja";
+const HERO_WA_MESSAGE = "Hi TeknoKerja, I'm interested in renting a laptop in Bali.";
 
 const LaptopRentalSection = () => {
   const { t, lp, locale } = useLanguage();
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const whatsappUrl = buildWhatsAppUrl(HERO_WA_MESSAGE);
+  const { data: readyCount, isLoading: countLoading } = useReadyLaptopCount();
+  const showCount = !countLoading && typeof readyCount === "number" && readyCount > 0;
 
   const cardsRef = useRef<HTMLDivElement>(null);
   const scrollZoomStyles = useScrollZoom(cardsRef, {
@@ -36,25 +38,31 @@ const LaptopRentalSection = () => {
           {/* Left Content */}
           <div className="animate-fade-in text-center lg:text-left">
             <FloatingElement delay={0} duration={4} distance={4}>
-              <span className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-semibold px-4 py-2 rounded-full mb-6">
-                {t("hero.badge")}
+              <span className="inline-flex items-center gap-2 bg-[hsl(var(--cta-green)/0.12)] text-[hsl(var(--cta-green))] text-sm font-bold px-4 py-2 rounded-full mb-6 border border-[hsl(var(--cta-green)/0.25)]">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[hsl(var(--cta-green))] opacity-60 animate-ping" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[hsl(var(--cta-green))]" />
+                </span>
+                {showCount
+                  ? `${readyCount} ${t("hero.badgeReady")}`
+                  : t("hero.badgeAvailable")}
               </span>
             </FloatingElement>
 
-            <h1 className="text-[38px] md:text-[42px] lg:text-[52px] font-[800] text-headline leading-[1.15] mb-4 md:mb-5 tracking-tight max-w-[92%] md:max-w-none mx-auto lg:mx-0">
-              <span className="inline">{t("hero.headline")}</span>{" "}
-              <span className="inline overflow-hidden" style={{ height: "1.25em", verticalAlign: "baseline" }}>
-                <RotatingText />
+            <h1 className="text-[36px] md:text-[44px] lg:text-[54px] font-[800] text-headline leading-[1.1] mb-4 md:mb-5 tracking-tight max-w-[92%] md:max-w-none mx-auto lg:mx-0">
+              {t("hero.headline")}{" "}
+              <span className="bg-gradient-to-r from-primary to-[hsl(var(--primary-deep,var(--primary)))] bg-clip-text text-transparent">
+                {t("hero.headlineAccent")}
               </span>
             </h1>
-            <p className="text-[17px] md:text-[17px] lg:text-lg text-body leading-[1.6] mb-5 md:mb-8 max-w-[90%] md:max-w-xl mx-auto lg:mx-0">
+            <p className="text-[16px] md:text-[17px] lg:text-lg text-body leading-[1.6] mb-5 md:mb-7 max-w-[92%] md:max-w-xl mx-auto lg:mx-0">
               {t("hero.sub1")}{" "}
               <span className="text-muted-foreground">
                 {t("hero.sub2")}
               </span>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 justify-center lg:justify-start">
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -66,7 +74,7 @@ const LaptopRentalSection = () => {
                 {t("hero.cta1")}
               </a>
               <Link
-                to={lp("/sewa-laptop")}
+                to={lp("/how-it-works")}
                 className="btn-cta text-base px-8 py-[13px] sm:py-4 w-full sm:w-auto"
               >
                 {t("hero.cta2")}
@@ -75,16 +83,15 @@ const LaptopRentalSection = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-body justify-center lg:justify-start">
-              <span className="inline-flex items-center gap-1.5 text-sm font-bold text-[hsl(var(--cta-green))] bg-[hsl(var(--cta-green)/0.1)] px-3 py-1 rounded-full">
-                💰 {t("hero.fromPrice")}
+              <span className="inline-flex items-center gap-2 text-sm">
+                <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
+                <span className="font-semibold text-headline">{t("hero.location")}</span>
               </span>
-              <span className="inline-flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-primary" />
-                <span className="font-medium">{t("hero.location")}</span>
-                <span className="text-muted-foreground">•</span>
-                <span>{t("hero.delivery")}</span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--cta-green))] bg-[hsl(var(--cta-green)/0.1)] px-2.5 py-1 rounded-full">
+                {t("hero.delivery")}
               </span>
             </div>
+
           </div>
 
           {/* Right Content - 3D Cards with Scroll Zoom */}

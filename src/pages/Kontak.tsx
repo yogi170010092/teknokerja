@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import GoogleMapsSection from "@/components/home/GoogleMapsSection";
 import { SEOHead, BreadcrumbNav, BreadcrumbSchema } from "@/components/seo";
 import { MessageCircle, Mail, Phone, MapPin, Send, Clock, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,8 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { useLanguage } from "@/i18n/LanguageContext";
 import type { TranslationKey } from "@/i18n/translations";
+import { buildWhatsAppUrl, WHATSAPP_NUMBER, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
+import { notifyAdmin } from "@/lib/notifyAdmin";
 
-const WHATSAPP_NUMBER = "6283891088084";
 const EMAIL = "iklansatu7@gmail.com";
 const PHONE = "0838-9108-8084";
 const ADDRESS = "Jl. Tukad Yeh Biu No.29, Sesetan, Denpasar Selatan, Kota Denpasar, Bali 80225";
@@ -36,8 +38,7 @@ const Kontak = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const getWhatsappUrl = (message: string) => 
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const getWhatsappUrl = (message: string) => buildWhatsAppUrl(message);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -60,7 +61,17 @@ const Kontak = () => {
     }
     setIsSubmitting(true);
     trackEvent("form_submit", { form_type: "contact_whatsapp", jenis_laptop: formData.jenisLaptop, durasi: formData.durasi });
-    const message = `Halo TeknoKerja, saya mau sewa laptop.\n\nNama: ${formData.nama}\nWhatsApp: ${formData.whatsapp}\nJenis Laptop: ${formData.jenisLaptop}\nDurasi: ${formData.durasi}\nMulai: ${formData.tanggalMulai}\nLokasi: ${formData.lokasi}\nCatatan: ${formData.catatan || "-"}`;
+    notifyAdmin("contact", {
+      Nama: formData.nama,
+      WhatsApp: formData.whatsapp,
+      "Jenis Laptop": formData.jenisLaptop,
+      Durasi: formData.durasi,
+      Mulai: formData.tanggalMulai,
+      Lokasi: formData.lokasi,
+      Catatan: formData.catatan || "—",
+      Locale: locale,
+    });
+    const message = `${getDefaultWhatsAppMessage(locale)}\n\nNama: ${formData.nama}\nWhatsApp: ${formData.whatsapp}\nJenis Laptop: ${formData.jenisLaptop}\nDurasi: ${formData.durasi}\nMulai: ${formData.tanggalMulai}\nLokasi: ${formData.lokasi}\nCatatan: ${formData.catatan || "-"}`;
     toast({ title: t("kontak.connecting"), description: t("kontak.dataSent") });
     setTimeout(() => {
       setIsSubmitting(false);
@@ -111,7 +122,7 @@ const Kontak = () => {
                 <div className="bg-card rounded-xl p-6 border border-border shadow-lg">
                   <h2 className="font-bold text-lg mb-2 text-headline">{t("kontak.fastest")}</h2>
                   <p className="text-sm text-body mb-4">{t("kontak.fastestDesc")}</p>
-                  <a href={getWhatsappUrl("Halo TeknoKerja, saya ingin bertanya tentang")} target="_blank" rel="noopener noreferrer" className="btn-whatsapp w-full justify-center" onClick={() => trackEvent("whatsapp_click", { location: "contact_sidebar", locale, service_category: "support" })}>
+                  <a href={getWhatsappUrl(getDefaultWhatsAppMessage(locale))} target="_blank" rel="noopener noreferrer" className="btn-whatsapp w-full justify-center" onClick={() => trackEvent("whatsapp_click", { location: "contact_sidebar", locale, service_category: "support" })}>
                     <MessageCircle className="w-5 h-5 mr-2" />{t("btn.whatsapp")}
                   </a>
                   <p className="text-xs text-caption mt-3 text-center">{PHONE}</p>
@@ -221,6 +232,8 @@ const Kontak = () => {
             </div>
           </div>
         </section>
+
+        <GoogleMapsSection variant="section" />
       </main>
 
       <Footer />

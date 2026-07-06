@@ -1,35 +1,29 @@
 import { useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { X, MessageCircle, Laptop, Users, Phone, Home, HelpCircle, ListChecks, FileText, Globe } from "lucide-react";
+import { X, MessageCircle, Users, Phone, Home, HelpCircle, ListChecks, FileText } from "lucide-react";
 import logoTeknokerja from "@/assets/logo-teknokerja.png";
 import { trackEvent } from "@/lib/analytics";
-import { useLanguage, SUPPORTED_LOCALES } from "@/i18n/LanguageContext";
-import type { TranslationKey, Locale } from "@/i18n/translations";
-
-const WHATSAPP_NUMBER = "6283891088084";
-const WHATSAPP_MESSAGE = "Hi TeknoKerja, I'd like to rent a laptop in Bali.";
-
-const LOCALE_LABEL: Record<Locale, string> = { en: "EN", id: "ID", ru: "RU", zh: "中文" };
+import { useLanguage } from "@/i18n/LanguageContext";
+import type { TranslationKey } from "@/i18n/translations";
+import { buildDefaultWhatsAppUrl } from "@/lib/whatsapp";
 
 interface MobileMenuOverlayProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const menuItems: { nameKey: TranslationKey; path: string; highlight?: boolean; icon: typeof Home }[] = [
+const menuItems: { nameKey: TranslationKey; path: string; icon: typeof Home }[] = [
   { nameKey: "nav.home", path: "/", icon: Home },
-  { nameKey: "nav.rental", path: "/sewa-laptop", highlight: true, icon: Laptop },
   { nameKey: "nav.howItWorks", path: "/how-it-works", icon: ListChecks },
   { nameKey: "nav.faq", path: "/faq", icon: HelpCircle },
   { nameKey: "nav.about", path: "/tentang", icon: Users },
   { nameKey: "nav.contact", path: "/kontak", icon: Phone },
-  { nameKey: "nav.terms", path: "/syarat-ketentuan", icon: FileText },
 ];
 
 const MobileMenuOverlay = ({ isOpen, onClose }: MobileMenuOverlayProps) => {
-  const { t, lp, locale, switchLocaleHref } = useLanguage();
+  const { t, lp, locale } = useLanguage();
   const location = useLocation();
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const whatsappUrl = buildDefaultWhatsAppUrl(locale);
 
   const closeMenu = useCallback(() => {
     document.body.classList.remove("menu-open");
@@ -139,48 +133,28 @@ const MobileMenuOverlay = ({ isOpen, onClose }: MobileMenuOverlayProps) => {
                       to={targetPath}
                       onClick={() => handleLinkClick(label)}
                       className={`mobile-menu-link ripple-effect ${
-                        item.highlight
-                          ? "text-primary font-bold bg-primary/10 hover:bg-primary/15"
-                          : isActive
-                            ? "text-primary bg-secondary"
-                            : "text-headline hover:bg-secondary hover:text-primary"
+                        isActive
+                          ? "text-primary bg-secondary"
+                          : "text-headline hover:bg-secondary hover:text-primary"
                       }`}
                     >
-                      <IconComponent className={`w-5 h-5 mr-3 flex-shrink-0 ${item.highlight ? "text-primary" : ""}`} />
-                      {item.highlight && <span className="mr-1">🔥</span>}
+                      <IconComponent className="w-5 h-5 mr-3 flex-shrink-0" />
                       <span className="text-[18px]">{label}</span>
                     </Link>
                   </li>
                 );
               })}
+              <li className="animate-menu-item-fade" style={{ animationDelay: `${menuItems.length * 60}ms` }}>
+                <Link
+                  to={lp("/blog")}
+                  onClick={() => handleLinkClick("Blog")}
+                  className="mobile-menu-link ripple-effect text-headline hover:bg-secondary hover:text-primary"
+                >
+                  <FileText className="w-5 h-5 mr-3 flex-shrink-0" />
+                  <span className="text-[18px]">Blog</span>
+                </Link>
+              </li>
             </ul>
-
-            {/* Language switcher */}
-            <div className="mt-6 pt-5 border-t border-border">
-              <p className="flex items-center gap-2 text-xs font-semibold text-caption uppercase tracking-wide mb-3 px-1">
-                <Globe className="w-4 h-4" /> Language
-              </p>
-              <div className="grid grid-cols-4 gap-2">
-                {SUPPORTED_LOCALES.map((l) => (
-                  <Link
-                    key={l}
-                    to={switchLocaleHref(l)}
-                    hrefLang={l}
-                    onClick={() => {
-                      trackEvent("menu_click", { item: "lang_switch", from: locale, to: l, location: "mobile_menu" });
-                      closeMenu();
-                    }}
-                    className={`text-center py-2 rounded-lg text-sm font-semibold transition-colors ${
-                      l === locale
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-headline hover:bg-primary/10 hover:text-primary"
-                    }`}
-                  >
-                    {LOCALE_LABEL[l]}
-                  </Link>
-                ))}
-              </div>
-            </div>
           </nav>
 
           <div className="p-5 sm:p-6 border-t border-border bg-secondary/40 mobile-bottom-cta">

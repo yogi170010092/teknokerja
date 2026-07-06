@@ -8,14 +8,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useLanguage } from "@/i18n/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
 
-const WHATSAPP_NUMBER = "6283891088084";
-const WHATSAPP_MESSAGE = "Hi TeknoKerja, I have a question about laptop rental in Bali.";
+import { buildDefaultWhatsAppUrl } from "@/lib/whatsapp";
 
 const FAQ_KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
 const FAQPage = () => {
   const { t, locale } = useLanguage();
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const whatsappUrl = buildDefaultWhatsAppUrl(locale);
 
   const items = FAQ_KEYS.map((n) => ({
     question: t(`faq.q${n}` as any),

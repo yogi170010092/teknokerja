@@ -7,13 +7,11 @@ import FAQSchema from "@/components/seo/FAQSchema";
 import RelatedHelp from "@/components/seo/RelatedHelp";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
-
-const WHATSAPP_NUMBER = "6283891088084";
-const WHATSAPP_MESSAGE = "Hi TeknoKerja, I'd like to rent a laptop in Bali.";
+import { buildDefaultWhatsAppUrl } from "@/lib/whatsapp";
 
 const HowItWorks = () => {
   const { t, locale, lp } = useLanguage();
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const whatsappUrl = buildDefaultWhatsAppUrl(locale);
 
   const steps = [
     { icon: MessageCircle, titleKey: "how.step1.title" as const, descKey: "how.step1.desc" as const },

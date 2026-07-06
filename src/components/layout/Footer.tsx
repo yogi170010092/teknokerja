@@ -3,9 +3,8 @@ import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import logoTeknokerja from "@/assets/logo-teknokerja.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
+import { buildDefaultWhatsAppUrl, WHATSAPP_NUMBER } from "@/lib/whatsapp";
 
-const WHATSAPP_NUMBER = "6283891088084";
-const WHATSAPP_MESSAGE = "Hi TeknoKerja, I'd like to rent a laptop in Bali.";
 const EMAIL = "iklansatu7@gmail.com";
 const PHONE = "+62 838-9108-8084";
 const ADDRESS = "Jl. Tukad Yeh Biu No.29, Sesetan, Denpasar Selatan, Bali 80225";
@@ -13,7 +12,7 @@ const ADDRESS = "Jl. Tukad Yeh Biu No.29, Sesetan, Denpasar Selatan, Bali 80225"
 const Footer = () => {
   const { t, lp, locale } = useLanguage();
   const currentYear = new Date().getFullYear();
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const whatsappUrl = buildDefaultWhatsAppUrl(locale);
 
   return (
     <footer className="bg-secondary border-t border-border">

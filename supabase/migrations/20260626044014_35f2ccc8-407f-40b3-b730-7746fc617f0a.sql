@@ -1,0 +1,1 @@
+CREATE POLICY "Admins manage instagram bucket" ON storage.objects FOR ALL TO authenticated USING (bucket_id = 'instagram' AND public.is_admin(auth.uid())) WITH CHECK (bucket_id = 'instagram' AND public.is_admin(auth.uid()));

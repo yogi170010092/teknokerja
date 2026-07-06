@@ -2,17 +2,17 @@ import { MessageCircle, Laptop, Users, Headphones } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
+import { buildWhatsAppUrl, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
 
 interface CTABannerProps {
   variant?: "default" | "inline" | "sidebar" | "article";
 }
 
-const WHATSAPP_NUMBER = "6283891088084";
-
 const CTABanner = ({ variant = "default" }: CTABannerProps) => {
   const { t, lp, locale } = useLanguage();
-  const getWhatsappUrl = (message: string) =>
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const defaultMsg = getDefaultWhatsAppMessage(locale);
+  const getWhatsappUrl = (extra?: string) =>
+    buildWhatsAppUrl(extra ? `${defaultMsg} (${extra})` : defaultMsg);
   const track = (location: string, category: string) =>
     trackEvent("whatsapp_click", { location, service_category: category, locale });
 

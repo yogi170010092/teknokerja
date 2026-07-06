@@ -7,8 +7,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import type { TranslationKey } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import RelatedHelp from "@/components/seo/RelatedHelp";
-
-const WHATSAPP_NUMBER = "6283891088084";
+import { buildWhatsAppUrl, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
 
 type ServiceCategory = "rental_work" | "rental_office" | "rental_event" | "rental_project" | "consultation" | "general";
 
@@ -52,8 +51,9 @@ const benefits: { icon: typeof CheckCircle; titleKey: TranslationKey; descKey: T
 
 const SewaLaptop = () => {
   const { t, locale, lp } = useLanguage();
-  const getWhatsappUrl = (message: string) =>
-    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const defaultMsg = getDefaultWhatsAppMessage(locale);
+  const getWhatsappUrl = (extra?: string) =>
+    buildWhatsAppUrl(extra ? `${defaultMsg} (${extra})` : defaultMsg);
   const canonical = `https://teknokerja.com${lp("/sewa-laptop")}`;
 
   return (

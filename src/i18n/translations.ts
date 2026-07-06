@@ -19,14 +19,18 @@ export const translations = {
 
   // Hero
   "hero.badge": { id: "🌴 #1 Sewa Laptop untuk Wisatawan di Bali", en: "🌴 #1 Laptop Rental in Bali for Travelers" , ru: "🌴 Аренда ноутбуков №1 на Бали для путешественников", zh: "🌴 巴厘岛旅客首选的笔记本电脑租赁服务" },
-  "hero.headline": { id: "Sewa Laptop di Bali untuk", en: "Laptop Rental in Bali for" , ru: "Аренда ноутбуков на Бали для", zh: "巴厘岛笔记本电脑租赁——" },
-  "hero.sub1": { id: "Harian, Mingguan, atau Bulanan — diantar ke hotel, villa, atau coworking space Anda.", en: "Daily, Weekly, or Monthly — delivered to your hotel, villa, or coworking space." , ru: "По дням, неделям или месяцам — доставим в ваш отель, виллу или коворкинг.", zh: "按天、周或月租赁 — 送货上门至您的酒店、别墅或共享办公空间。" },
-  "hero.sub2": { id: "Dipercaya ratusan wisatawan & digital nomad. Tanpa ribet, tanpa biaya tersembunyi, respon cepat 24/7.", en: "Trusted by hundreds of travelers & digital nomads. No hassle, no hidden fees, fast 24/7 response." , ru: "Нам доверяют сотни путешественников и цифровых кочевников. Никаких хлопот, никаких скрытых платежей, быстрый ответ 24/7.", zh: "深受数百名旅客和数字游民信赖。无忧无虑，无隐藏费用，24/7 快速响应。" },
-  "hero.cta1": { id: "Pesan via WhatsApp", en: "Book on WhatsApp" , ru: "Забронировать через WhatsApp", zh: "在 WhatsApp 上预订" },
+  "hero.headline": { id: "Sewa Laptop di Bali", en: "Laptop Rental in Bali" , ru: "Аренда ноутбуков на Бали", zh: "巴厘岛笔记本电脑租赁" },
+  "hero.headlineAccent": { id: "untuk Wisatawan & Remote Worker", en: "for Travelers & Remote Workers", ru: "для путешественников и удалённых сотрудников", zh: "面向旅客与远程工作者" },
+  "hero.sub1": { id: "Harian, Mingguan, atau Bulanan — diantar langsung ke hotel, villa, atau coworking space Anda.", en: "Daily, Weekly, or Monthly — delivered directly to your hotel, villa, or coworking space." , ru: "По дням, неделям или месяцам — доставим прямо в ваш отель, виллу или коворкинг.", zh: "按天、周或月租赁 — 直接送至您的酒店、别墅或共享办公空间。" },
+  "hero.sub2": { id: "Dipercaya wisatawan, digital nomad, dan bisnis di seluruh Bali.", en: "Trusted by travelers, digital nomads, and businesses across Bali." , ru: "Нам доверяют путешественники, цифровые кочевники и компании по всему Бали.", zh: "深受巴厘岛各地旅客、数字游民与企业的信赖。" },
+  "hero.cta1": { id: "Sewa via WhatsApp", en: "Rent via WhatsApp" , ru: "Арендовать через WhatsApp", zh: "通过 WhatsApp 租赁" },
   "hero.cta2": { id: "Lihat Cara Kerjanya", en: "See How It Works" , ru: "Посмотреть, как это работает", zh: "了解工作原理" },
-  "hero.location": { id: "Canggu • Seminyak • Ubud • Kuta", en: "Canggu • Seminyak • Ubud • Kuta" , ru: "Canggu • Seminyak • Ubud • Kuta", zh: "坎古 • 水明漾 • 乌布 • 库塔" },
-  "hero.delivery": { id: "Antar gratis", en: "Free delivery" , ru: "Бесплатная доставка", zh: "免费送货" },
+  "hero.location": { id: "Canggu · Seminyak · Ubud · Kuta", en: "Canggu · Seminyak · Ubud · Kuta" , ru: "Чангу · Семиньяк · Убуд · Кута", zh: "坎古 · 水明漾 · 乌布 · 库塔" },
+  "hero.delivery": { id: "🚚 Antar gratis", en: "🚚 Free delivery" , ru: "🚚 Бесплатная доставка", zh: "🚚 免费送货" },
   "hero.fromPrice": { id: "Mulai Rp 100rb (~$7)", en: "Start from Rp 100K (~$7)" , ru: "От Rp 100K (~$7)", zh: "起价 Rp 10万盾 (约 $7)" },
+  "hero.badgeAvailable": { id: "Tersedia Sekarang", en: "Available Now", ru: "Доступно сейчас", zh: "现在可租" },
+  "hero.badgeReady": { id: "Laptop Siap Hari Ini", en: "Laptops Ready Today", ru: "ноутбуков готовы сегодня", zh: "台笔记本今日可租" },
+
 
   // Rotating words
   "rotating.0": { id: "Digital Nomad", en: "Digital Nomads" , ru: "Цифровых кочевников", zh: "数字游民" },
@@ -254,6 +258,10 @@ export const translations = {
   "form.durWeeklyDesc": { id: "Sewa mingguan", en: "Weekly rental" , ru: "Еженедельная аренда", zh: "按周租赁" },
   "form.durMonthly": { id: "1 Bulan+", en: "1 Month+" , ru: "1 месяц+", zh: "1 个月+" },
   "form.durMonthlyDesc": { id: "Sewa bulanan", en: "Monthly rental" , ru: "Ежемесячная аренда", zh: "按月租赁" },
+  "form.yourName": { id: "Nama Anda", en: "Your name" , ru: "Ваше имя", zh: "您的姓名" },
+  "form.yourWa": { id: "Nomor WhatsApp", en: "WhatsApp number" , ru: "Номер WhatsApp", zh: "WhatsApp 号码" },
+  "form.contactStep": { id: "Kontak Anda", en: "Your contact" , ru: "Ваши контакты", zh: "您的联系方式" },
+  "form.savingLead": { id: "Mengirim…", en: "Sending…" , ru: "Отправка…", zh: "发送中…" },
 
   // ScrollCTA & FloatingWhatsApp
   "scroll.title": { id: "Butuh laptop cepat? Chat TeknoKerja sekarang.", en: "Need a laptop fast? Chat TeknoKerja now." , ru: "Нужен ноутбук срочно? Напиши TeknoKerja сейчас.", zh: "急需笔记本电脑？立即联系 TeknoKerja。" },
@@ -301,6 +309,29 @@ export const translations = {
   "stockPage.title": { id: "Stok Laptop di Bali", en: "Laptop Stock in Bali" , ru: "Наличие ноутбуков на Бали", zh: "巴厘岛笔记本电脑库存" },
   "stockPage.subtitle": { id: "Semua laptop tersedia dari Bali Sale Computer", en: "All available laptops from Bali Sale Computer" , ru: "Все доступные ноутбуки от Bali Sale Computer", zh: "来自巴厘岛销售电脑的所有可用笔记本电脑" },
   "nav.stock": { id: "Stok Laptop", en: "Laptop Stock" , ru: "Наличие ноутбуков", zh: "笔记本电脑库存" },
+
+  // Featured laptops (homepage)
+  "featured.eyebrow": { id: "Laptop Unggulan", en: "Featured Laptops", ru: "Рекомендуемые ноутбуки", zh: "精选笔记本电脑" },
+  "featured.title": { id: "Laptop Populer Siap Hari Ini", en: "Popular Laptops Ready Today", ru: "Популярные ноутбуки, доступные сегодня", zh: "今日可租热门笔记本" },
+  "featured.subtitle": { id: "Pilihan pelanggan kami. Harian, mingguan, atau bulanan.", en: "Hand-picked rentals our customers love. Daily, weekly, or monthly.", ru: "Лучший выбор наших клиентов. По дням, неделям или месяцам.", zh: "客户喜爱的精选租赁。按日、周或月租赁。" },
+  "featured.viewAll": { id: "Lihat semua laptop", en: "View all laptops", ru: "Посмотреть все ноутбуки", zh: "查看全部笔记本" },
+  "featured.empty": { id: "Belum ada laptop yang ditampilkan.", en: "No laptops to show yet.", ru: "Пока нет ноутбуков для показа.", zh: "暂无可显示的笔记本电脑。" },
+  "featured.from": { id: "Mulai", en: "From", ru: "От", zh: "起价" },
+  "featured.perDay": { id: "/ hari", en: "/ day", ru: "/ день", zh: "/ 天" },
+  "featured.rentNow": { id: "Sewa Sekarang", en: "Rent Now", ru: "Арендовать", zh: "立即租赁" },
+  "featured.statusReady": { id: "Tersedia", en: "Ready", ru: "Доступен", zh: "可租" },
+  "featured.statusRented": { id: "Disewa", en: "Rented", ru: "Арендован", zh: "已租" },
+  "featured.statusMaint": { id: "Perawatan", en: "Maintenance", ru: "На обслуживании", zh: "维护中" },
+
+  // Homepage FAQ (for FAQSchema + rich results)
+  "home.faq.q1": { id: "Di mana saya bisa menyewa laptop di Bali?", en: "Where can I rent a laptop in Bali?", ru: "Где можно арендовать ноутбук на Бали?", zh: "在巴厘岛哪里可以租笔记本电脑？" },
+  "home.faq.a1": { id: "TeknoKerja mengantar sewa laptop ke seluruh Bali — Canggu, Seminyak, Ubud, Kuta, Sanur, dan Denpasar — biasanya dalam beberapa jam setelah pesan via WhatsApp. Mulai Rp100.000 (~$7).", en: "TeknoKerja delivers laptop rentals across Bali — Canggu, Seminyak, Ubud, Kuta, Sanur, and Denpasar — usually within hours of booking on WhatsApp. Rentals start from IDR 100,000 (~USD 7).", ru: "TeknoKerja доставляет ноутбуки в аренду по всему Бали — Чангу, Семиньяк, Убуд, Кута, Санур и Денпасар — обычно в течение нескольких часов после заказа в WhatsApp. Аренда от 100 000 IDR (~7 USD).", zh: "TeknoKerja 为整个巴厘岛提供笔记本电脑租赁配送 — 坎古、水明漾、乌布、库塔、沙努尔和登巴萨 — 通常在 WhatsApp 预订后数小时内送达。租金起价 IDR 100,000（约 USD 7）。" },
+  "home.faq.q2": { id: "Bisakah wisatawan menyewa laptop di Bali?", en: "Can tourists rent laptops in Bali?", ru: "Могут ли туристы арендовать ноутбуки на Бали?", zh: "游客可以在巴厘岛租笔记本电脑吗？" },
+  "home.faq.a2": { id: "Ya. Wisatawan asing dan digital nomad bisa sewa laptop hanya dengan paspor yang masih berlaku dan deposit yang dapat dikembalikan.", en: "Yes. Foreign tourists and digital nomads can rent laptops with just a valid passport and a refundable deposit.", ru: "Да. Иностранные туристы и цифровые кочевники могут арендовать ноутбук, имея действующий паспорт и возвратный депозит.", zh: "可以。外国游客和数字游民只需有效护照和可退还押金即可租用笔记本电脑。" },
+  "home.faq.q3": { id: "Berapa biaya sewa laptop di Bali?", en: "How much does laptop rental cost in Bali?", ru: "Сколько стоит аренда ноутбука на Бали?", zh: "在巴厘岛租笔记本电脑多少钱？" },
+  "home.faq.a3": { id: "Sewa mulai Rp100.000 (~$7). Paket mingguan dan bulanan jauh lebih hemat.", en: "Rentals start from IDR 100,000 (~USD 7). Weekly and monthly packages offer significant discounts.", ru: "Аренда от 100 000 IDR (~7 USD). Недельные и месячные пакеты значительно выгоднее.", zh: "租金起价 IDR 100,000（约 USD 7）。周租和月租套餐折扣更大。" },
+
+
 
   // Pricing Section
   "pricing.title": { id: "Durasi & Harga Sewa Laptop", en: "Rental Duration & Pricing" , ru: "Срок и стоимость аренды", zh: "租赁时长与价格" },
@@ -417,6 +448,44 @@ export const translations = {
   "seo.terms.desc": { id: "Baca syarat & ketentuan sewa laptop TeknoKerja di Bali: prosedur, pembayaran, deposit, dan kebijakan pengembalian.", en: "Read TeknoKerja's laptop rental terms & conditions in Bali: procedures, payment, deposit, and return policy.", ru: "Условия аренды ноутбуков TeknoKerja на Бали: процедуры, оплата, депозит и политика возврата.", zh: "阅读 TeknoKerja 在巴厘岛的笔记本电脑租赁条款：流程、付款、押金和退还政策。" },
   "seo.stock.title": { id: "Stok Laptop Tersedia di Bali — TeknoKerja", en: "Available Laptop Stock in Bali — TeknoKerja", ru: "Наличие ноутбуков на Бали — TeknoKerja", zh: "巴厘岛可用笔记本电脑库存 — TeknoKerja" },
   "seo.stock.desc": { id: "Lihat stok laptop terbaru. Tersedia untuk disewa melalui TeknoKerja di Bali.", en: "Browse the latest laptop stock available to rent via TeknoKerja in Bali.", ru: "Посмотрите актуальный список ноутбуков, доступных для аренды через TeknoKerja на Бали.", zh: "浏览可通过 TeknoKerja 在巴厘岛租用的最新笔记本电脑库存。" },
+
+  // Common UI states
+  "ui.loading": { id: "Memuat…", en: "Loading…", ru: "Загрузка…", zh: "加载中…" },
+  "ui.empty": { id: "Belum ada data.", en: "No data yet.", ru: "Пока нет данных.", zh: "暂无数据。" },
+  "ui.error": { id: "Terjadi kesalahan. Coba lagi.", en: "Something went wrong. Please try again.", ru: "Произошла ошибка. Попробуйте снова.", zh: "出错了，请重试。" },
+  "ui.close": { id: "Tutup", en: "Close", ru: "Закрыть", zh: "关闭" },
+  "ui.prev": { id: "Sebelumnya", en: "Previous", ru: "Назад", zh: "上一个" },
+  "ui.next": { id: "Berikutnya", en: "Next", ru: "Далее", zh: "下一个" },
+
+  // Testimonials & Reviews
+  "rev.eyebrow": { id: "Ulasan WhatsApp Asli", en: "Real WhatsApp Reviews", ru: "Реальные отзывы в WhatsApp", zh: "真实 WhatsApp 评价" },
+  "rev.heading": { id: "Apa Kata Pelanggan Kami", en: "What Our Customers Say", ru: "Что говорят наши клиенты", zh: "客户怎么说" },
+  "rev.sub": { id: "Percakapan asli dari wisatawan dan digital nomad yang menyewa di TeknoKerja Bali.", en: "Real conversations from travelers and digital nomads who rented with TeknoKerja in Bali.", ru: "Реальные переписки путешественников и цифровых кочевников, арендовавших у TeknoKerja на Бали.", zh: "来自在巴厘岛 TeknoKerja 租赁的旅客和数字游民的真实对话。" },
+  "rev.empty": { id: "Belum ada ulasan.", en: "No reviews yet.", ru: "Пока нет отзывов.", zh: "暂无评价。" },
+  "rev.viewAll": { id: "Lihat semua ulasan", en: "View all reviews", ru: "Смотреть все отзывы", zh: "查看全部评价" },
+  "rev.viewScreenshot": { id: "Lihat tangkapan layar", en: "View screenshot", ru: "Открыть скриншот", zh: "查看截图" },
+  "rev.verified": { id: "Penyewa terverifikasi", en: "Verified renter", ru: "Проверенный арендатор", zh: "已验证租户" },
+  "rev.pageTitle": { id: "Ulasan Pelanggan — Sewa Laptop TeknoKerja Bali", en: "Customer Reviews — TeknoKerja Laptop Rental Bali", ru: "Отзывы клиентов — аренда ноутбуков TeknoKerja на Бали", zh: "客户评价 — TeknoKerja 巴厘岛笔记本电脑租赁" },
+  "rev.pageDesc": { id: "Ulasan WhatsApp asli dari wisatawan dan digital nomad yang menyewa laptop di TeknoKerja Bali.", en: "Real WhatsApp reviews from travelers and digital nomads who rented laptops with TeknoKerja in Bali.", ru: "Реальные отзывы из WhatsApp от путешественников и цифровых кочевников, арендовавших ноутбуки у TeknoKerja на Бали.", zh: "来自在巴厘岛 TeknoKerja 租用笔记本电脑的旅客和数字游民的真实 WhatsApp 评价。" },
+  "rev.verifiedCount": { id: "{n} ulasan terverifikasi", en: "{n} verified reviews", ru: "{n} проверенных отзывов", zh: "{n} 条已验证评价" },
+  "rev.intro": { id: "dari wisatawan dan digital nomad yang menyewa laptop di Bali.", en: "from travelers and digital nomads renting laptops in Bali.", ru: "от путешественников и цифровых кочевников, арендующих ноутбуки на Бали.", zh: "来自在巴厘岛租用笔记本电脑的旅客与数字游民。" },
+
+  // Google Maps section
+  "maps.eyebrow": { id: "Temukan Kami di Bali", en: "Find Us in Bali", ru: "Найдите нас на Бали", zh: "在巴厘岛找到我们" },
+  "maps.heading": { id: "Kunjungi TeknoKerja atau Dapatkan Antar Gratis", en: "Visit TeknoKerja or Get Free Delivery", ru: "Посетите TeknoKerja или получите бесплатную доставку", zh: "光临 TeknoKerja 或享受免费送货" },
+  "maps.sub": { id: "Berbasis di Denpasar — kami antar laptop ke seluruh Bali Selatan, Canggu, Ubud, dan lainnya.", en: "Based in Denpasar — we deliver laptops across South Bali, Canggu, Ubud & more.", ru: "Базируемся в Денпасаре — доставляем ноутбуки по югу Бали, Чангу, Убуду и далее.", zh: "总部位于登巴萨 — 为巴厘岛南部、坎古、乌布等地区配送笔记本电脑。" },
+  "maps.address": { id: "Alamat Kami", en: "Our Address", ru: "Наш адрес", zh: "我们的地址" },
+  "maps.hours": { id: "Jam Buka", en: "Open Hours", ru: "Часы работы", zh: "营业时间" },
+  "maps.phone": { id: "WhatsApp / Telepon", en: "WhatsApp / Call", ru: "WhatsApp / Звонок", zh: "WhatsApp / 电话" },
+  "maps.directions": { id: "Petunjuk Arah", en: "Directions", ru: "Маршрут", zh: "路线" },
+  "maps.coverage": { id: "Area Antar Gratis", en: "Free Delivery Coverage", ru: "Зона бесплатной доставки", zh: "免费送货区域" },
+  "maps.coverageNote": { id: "Area lain di Bali tersedia atas permintaan — chat kami di WhatsApp.", en: "Other areas in Bali available on request — message us on WhatsApp.", ru: "Другие районы Бали — по запросу. Напишите нам в WhatsApp.", zh: "巴厘岛其他地区可按需配送 — 请在 WhatsApp 上联系我们。" },
+
+  // Instagram section
+  "ig.eyebrow": { id: "Instagram", en: "Instagram", ru: "Instagram", zh: "Instagram" },
+  "ig.heading": { id: "Di Balik Layar di Bali", en: "Behind the Scenes in Bali", ru: "За кадром на Бали", zh: "巴厘岛的幕后" },
+  "ig.sub": { id: "Laptop asli, penyewa asli, momen Bali yang asli. Ikuti kami untuk stok terbaru & cerita pelanggan.", en: "Real laptops, real renters, real Bali moments. Follow us for stock drops & customer stories.", ru: "Настоящие ноутбуки, настоящие арендаторы, настоящие моменты Бали. Подпишитесь — узнавайте о поступлениях и историях клиентов.", zh: "真实的笔记本电脑、真实的租户、真实的巴厘瞬间。关注我们获取新货上架与客户故事。" },
+  "ig.follow": { id: "Ikuti", en: "Follow", ru: "Подписаться", zh: "关注" },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

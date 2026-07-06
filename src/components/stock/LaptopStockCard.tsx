@@ -1,18 +1,17 @@
 import { ExternalLink, MessageCircle } from "lucide-react";
 import type { LaptopProduct } from "@/lib/scrapeProducts";
 import { useLanguage } from "@/i18n/LanguageContext";
-
-const WHATSAPP_NUMBER = "6283891088084";
+import { buildWhatsAppUrl, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
 
 interface Props {
   product: LaptopProduct;
 }
 
 const LaptopStockCard = ({ product }: Props) => {
-  const { t } = useLanguage();
-  const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    `Halo TeknoKerja, saya tertarik sewa laptop: ${product.name} (${product.price})`
-  )}`;
+  const { t, locale } = useLanguage();
+  const waUrl = buildWhatsAppUrl(
+    `${getDefaultWhatsAppMessage(locale)} (${product.name} — ${product.price})`
+  );
 
   return (
     <div className="group bg-card rounded-2xl border border-border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
@@ -60,15 +59,17 @@ const LaptopStockCard = ({ product }: Props) => {
             {product.price}
           </p>
           <div className="flex gap-2">
-            <a
-              href={product.detailUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg border border-border hover:bg-muted transition-colors"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              {t("stock.viewDetail")}
-            </a>
+            {product.detailUrl && product.detailUrl !== "#" && (
+              <a
+                href={product.detailUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg border border-border hover:bg-muted transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                {t("stock.viewDetail")}
+              </a>
+            )}
             <a
               href={waUrl}
               target="_blank"

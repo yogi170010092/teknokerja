@@ -2,15 +2,13 @@ import { useState, useEffect } from "react";
 import { MessageCircle, X } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { useLanguage } from "@/i18n/LanguageContext";
-
-const WHATSAPP_NUMBER = "6283891088084";
-const WHATSAPP_MESSAGE = "Halo TeknoKerja, saya mau sewa laptop.";
+import { buildDefaultWhatsAppUrl } from "@/lib/whatsapp";
 
 const FloatingWhatsApp = () => {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [shouldPulse, setShouldPulse] = useState(false);
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const whatsappUrl = buildDefaultWhatsAppUrl(locale);
 
   useEffect(() => {
     const timer = setTimeout(() => setShouldPulse(true), 15000);
@@ -18,7 +16,7 @@ const FloatingWhatsApp = () => {
   }, []);
 
   const handleClick = () => {
-    trackEvent("whatsapp_click", { location: "floating_button", locale: (typeof window !== "undefined" ? (window.location.pathname.match(/^\/(id|ru|zh)/)?.[1] ?? "en") : "en"), service_category: "general" });
+    trackEvent("whatsapp_click", { location: "floating_button", locale, service_category: "general" });
     window.open(whatsappUrl, "_blank");
   };
 

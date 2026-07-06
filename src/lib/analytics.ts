@@ -10,7 +10,8 @@ type EventName =
   | "menu_click"
   | "page_view"
   | "faq_open"
-  | "lang_switch";
+  | "lang_switch"
+  | "instagram_click";
 
 interface EventData {
   [key: string]: string | number | boolean | undefined | null;

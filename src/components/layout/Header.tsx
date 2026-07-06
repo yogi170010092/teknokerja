@@ -7,9 +7,7 @@ import { trackEvent } from "@/lib/analytics";
 import MobileMenuOverlay from "./MobileMenuOverlay";
 import { useLanguage, SUPPORTED_LOCALES } from "@/i18n/LanguageContext";
 import type { Locale } from "@/i18n/translations";
-
-const WHATSAPP_NUMBER = "6283891088084";
-const WHATSAPP_MESSAGE = "Hi TeknoKerja, I'd like to rent a laptop in Bali.";
+import { buildDefaultWhatsAppUrl } from "@/lib/whatsapp";
 
 const LOCALE_LABEL: Record<Locale, string> = {
   en: "EN",
@@ -39,7 +37,7 @@ const Header = () => {
     trackEvent("whatsapp_click", { location: "header", locale, service_category: "general" });
   };
 
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const whatsappUrl = buildDefaultWhatsAppUrl(locale);
 
   return (
     <>
@@ -81,14 +79,14 @@ const Header = () => {
               <Link to={lp("/")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
                 {t("nav.home")}
               </Link>
-              <Link to={lp("/sewa-laptop")} className="text-base font-bold text-primary hover:text-primary/80 transition-colors">
-                {t("nav.rental")}
-              </Link>
               <Link to={lp("/how-it-works")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
                 {t("nav.howItWorks")}
               </Link>
               <Link to={lp("/faq")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
                 {t("nav.faq")}
+              </Link>
+              <Link to={lp("/blog")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
+                Blog
               </Link>
               <Link to={lp("/tentang")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
                 {t("nav.about")}
@@ -103,10 +101,10 @@ const Header = () => {
               {/* Language Switcher (desktop) */}
               <div className="relative group hidden md:block">
                 <button
-                  className="flex items-center gap-1 px-3 py-2 rounded-full border border-border bg-card hover:border-primary/40 transition-colors text-sm font-semibold text-headline"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-full hover:bg-secondary transition-colors text-xs font-semibold text-body"
                   aria-label="Change language"
                 >
-                  <Globe className="w-4 h-4" />
+                  <Globe className="w-3.5 h-3.5" />
                   <span>{LOCALE_LABEL[locale]}</span>
                   <ChevronDown className="w-3 h-3 opacity-60" />
                 </button>

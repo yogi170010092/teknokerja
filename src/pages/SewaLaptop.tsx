@@ -8,6 +8,7 @@ import type { TranslationKey } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import RelatedHelp from "@/components/seo/RelatedHelp";
 import { buildWhatsAppUrl, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
+import { Link } from "react-router-dom";
 
 type ServiceCategory = "rental_work" | "rental_office" | "rental_event" | "rental_project" | "consultation" | "general";
 
@@ -94,16 +95,13 @@ const SewaLaptop = () => {
                 {t("sewa.sub")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
-                <a
-                  href={getWhatsappUrl("Halo, saya tertarik sewa laptop TeknoKerja. Bisa info lebih lanjut?")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackEvent("whatsapp_click", { location: "sewa_hero", locale, service_category: "general" })}
-                  className="btn-whatsapp text-lg px-8 py-4 hover-glow"
+                <Link
+                  to={lp("/laptop-stock")}
+                  className="btn-whatsapp text-lg px-8 py-4 hover-glow inline-flex items-center justify-center"
                 >
-                  <MessageCircle className="w-6 h-6 mr-2" />
+                  <Laptop className="w-6 h-6 mr-2" />
                   {t("sewa.ctaRent")}
-                </a>
+                </Link>
                 <a
                   href={getWhatsappUrl("Halo, saya mau konsultasi dulu tentang kebutuhan laptop")}
                   target="_blank"

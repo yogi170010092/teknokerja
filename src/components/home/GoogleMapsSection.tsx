@@ -4,7 +4,16 @@ import { buildWhatsAppUrl, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
 import { trackEvent } from "@/lib/analytics";
 import { useWebsiteSettings } from "@/hooks/useWebsiteSettings";
 
-const COVERAGE = ["Canggu", "Seminyak", "Ubud", "Kuta", "Uluwatu", "Denpasar", "Sanur", "Jimbaran"];
+const COVERAGE = [
+  "Canggu",
+  "Seminyak",
+  "Ubud",
+  "Kuta",
+  "Uluwatu",
+  "Denpasar",
+  "Sanur",
+  "Jimbaran",
+];
 
 interface Props {
   variant?: "section" | "compact";
@@ -12,10 +21,13 @@ interface Props {
 
 const GoogleMapsSection = ({ variant = "section" }: Props) => {
   const { locale, t } = useLanguage();
-  const { address, business_hours, whatsapp_number, phone, google_maps_embed } = useWebsiteSettings();
+  const { address, business_hours, whatsapp_number, phone, google_maps_embed } =
+    useWebsiteSettings();
 
   const mapQuery = encodeURIComponent(`TeknoKerja, ${address}`);
-  const embedSrc = google_maps_embed || `https://www.google.com/maps?q=${mapQuery}&output=embed`;
+  const embedSrc =
+    google_maps_embed ||
+    `https://www.google.com/maps?q=${mapQuery}&output=embed`;
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
   const waUrl = buildWhatsAppUrl(getDefaultWhatsAppMessage(locale));
 
@@ -40,7 +52,7 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
         <div className="grid lg:grid-cols-5 gap-6 md:gap-8">
           {/* Map */}
           <div className="lg:col-span-3 rounded-2xl overflow-hidden border border-border shadow-lg bg-card">
-            <div className="relative w-full aspect-[4/3] md:aspect-[16/10]">
+            <div className="relative w-full h-[618px]">
               <iframe
                 src={embedSrc}
                 title="TeknoKerja Bali — Google Maps"
@@ -60,7 +72,9 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-headline mb-1">{t("maps.address")}</h3>
+                  <h3 className="text-sm font-bold text-headline mb-1">
+                    {t("maps.address")}
+                  </h3>
                   <p className="text-sm text-body leading-relaxed">{address}</p>
                 </div>
               </div>
@@ -70,7 +84,9 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
                   <Clock className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-headline mb-1">{t("maps.hours")}</h3>
+                  <h3 className="text-sm font-bold text-headline mb-1">
+                    {t("maps.hours")}
+                  </h3>
                   <p className="text-sm text-body">{business_hours}</p>
                 </div>
               </div>
@@ -80,8 +96,13 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
                   <Phone className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-headline mb-1">{t("maps.phone")}</h3>
-                  <a href={`tel:+${whatsapp_number}`} className="text-sm text-body hover:text-primary">
+                  <h3 className="text-sm font-bold text-headline mb-1">
+                    {t("maps.phone")}
+                  </h3>
+                  <a
+                    href={`tel:+${whatsapp_number}`}
+                    className="text-sm text-body hover:text-primary"
+                  >
                     {phone}
                   </a>
                 </div>
@@ -92,7 +113,13 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
                   href={waUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackEvent("whatsapp_click", { location: "maps_section", locale, service_category: "support" })}
+                  onClick={() =>
+                    trackEvent("whatsapp_click", {
+                      location: "maps_section",
+                      locale,
+                      service_category: "support",
+                    })
+                  }
                   className="btn-whatsapp justify-center text-sm py-2.5"
                 >
                   <MessageCircle className="w-4 h-4 mr-1.5" />
@@ -111,21 +138,58 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
             </div>
 
             <div className="bg-card rounded-2xl border border-border p-5 md:p-6">
-              <h3 className="text-sm font-bold text-headline mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-headline mb-4 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-500" />
-                {t("maps.coverage")}
+                Delivery Information
               </h3>
-              <div className="flex flex-wrap gap-2">
-                {COVERAGE.map((area) => (
-                  <span
-                    key={area}
-                    className="text-xs font-medium px-3 py-1.5 rounded-full bg-primary/5 text-primary border border-primary/15"
-                  >
-                    {area}
-                  </span>
-                ))}
+
+              <div className="space-y-4 text-sm">
+                <div className="rounded-lg border p-3">
+                  <p className="font-semibold text-green-600 mb-2">
+                    🚚 Delivery Fee Rp50.000
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Badung",
+                      "Kuta",
+                      "Seminyak",
+                      "Canggu",
+                      "Jimbaran",
+                      "Nusa Dua",
+                    ].map((area) => (
+                      <span
+                        key={area}
+                        className="px-3 py-1 rounded-full bg-green-50 text-green-700 border border-green-200 text-xs"
+                      >
+                        {area}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-lg border p-3">
+                  <p className="font-semibold text-orange-600 mb-2">
+                    🚚 Delivery Fee Rp100.000
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {["Uluwatu", "Pecatu", "Tabanan", "Bangli", "Buleleng"].map((area) => (
+                      <span
+                        key={area}
+                        className="px-3 py-1 rounded-full bg-orange-50 text-orange-700 border border-orange-200 text-xs"
+                      >
+                        {area}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  * Delivery outside these areas will be quoted separately via
+                  WhatsApp.
+                </p>
               </div>
-              <p className="text-xs text-caption mt-3">{t("maps.coverageNote")}</p>
             </div>
           </div>
         </div>

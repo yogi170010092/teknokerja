@@ -6,23 +6,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
-import { Plus, Trash2, Upload, Loader2, ImageIcon } from "lucide-react";
+import { Plus, Trash2, Upload, Loader2, ImageIcon, Pencil } from "lucide-react";
 
 type Laptop = Database["public"]["Tables"]["laptops"]["Row"];
 type LStatus = Database["public"]["Enums"]["laptop_status"];
 
 const statuses: LStatus[] = ["ready", "rented", "maintenance", "out_of_stock"];
 
+const emptyForm = { name: "", brand: "", processor: "", ram: "", price_daily: "", photo_url: "" };
+
 const LaptopsPage = () => {
   const [items, setItems] = useState<Laptop[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", brand: "", processor: "", ram: "", price_daily: "", photo_url: "" });
+  const [form, setForm] = useState(emptyForm);
   const [uploadingNew, setUploadingNew] = useState(false);
   const [uploadingRow, setUploadingRow] = useState<string | null>(null);
   const rowInputs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // --- Edit dialog state ---
+  const [editingItem, setEditingItem] = useState<Laptop | null>(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [uploadingEdit, setUploadingEdit] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -83,9 +98,64 @@ const LaptopsPage = () => {
     const { error } = await supabase.from("laptops").insert(payload);
     if (error) return toast({ title: "Create failed", description: error.message, variant: "destructive" });
     toast({ title: "Laptop ditambahkan" });
-    setForm({ name: "", brand: "", processor: "", ram: "", price_daily: "", photo_url: "" });
+    setForm(emptyForm);
     setShowForm(false);
     load();
+  };
+
+  // --- Edit handlers ---
+  const openEdit = (item: Laptop) => {
+    setEditingItem(item);
+    setEditForm({
+      name: item.name ?? "",
+      brand: item.brand ?? "",
+      processor: item.processor ?? "",
+      ram: item.ram ?? "",
+      price_daily: item.price_daily?.toString() ?? "",
+      photo_url: item.photo_url ?? "",
+    });
+  };
+
+  const closeEdit = () => {
+    setEditingItem(null);
+    setEditForm(emptyForm);
+  };
+
+  const handleEditUpload = async (file: File) => {
+    setUploadingEdit(true);
+    try {
+      const url = await uploadImage("laptops", file);
+      setEditForm((f) => ({ ...f, photo_url: url }));
+      toast({ title: "Image uploaded" });
+    } catch (e: any) {
+      toast({ title: "Upload failed", description: e.message, variant: "destructive" });
+    } finally { setUploadingEdit(false); }
+  };
+
+  const saveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    setSavingEdit(true);
+    const payload = {
+      name: editForm.name,
+      brand: editForm.brand || null,
+      processor: editForm.processor || null,
+      ram: editForm.ram || null,
+      price_daily: editForm.price_daily ? Number(editForm.price_daily) : null,
+      photo_url: editForm.photo_url || null,
+    };
+
+    const { error } = await supabase.from("laptops").update(payload).eq("id", editingItem.id);
+    setSavingEdit(false);
+
+    if (error) {
+      return toast({ title: "Update failed", description: error.message, variant: "destructive" });
+    }
+
+    toast({ title: "Laptop berhasil diupdate" });
+    setItems((arr) => arr.map((l) => (l.id === editingItem.id ? { ...l, ...payload } : l)));
+    closeEdit();
   };
 
   return (
@@ -144,12 +214,12 @@ const LaptopsPage = () => {
               <th className="p-3 font-medium">Spek</th>
               <th className="p-3 font-medium">Harga/hari</th>
               <th className="p-3 font-medium">Status</th>
-              <th className="p-3 font-medium w-10"></th>
+              <th className="p-3 font-medium w-16"></th>
             </tr>
           </thead>
           <tbody>
             {items.length === 0 && !loading && (
-              <tr><td colSpan={7} className="p-8 text-center text-caption">Belum ada laptop. Klik “Tambah Laptop”.</td></tr>
+              <tr><td colSpan={7} className="p-8 text-center text-caption">Belum ada laptop. Klik "Tambah Laptop".</td></tr>
             )}
             {items.map((l) => (
               <tr key={l.id} className="border-t border-border">
@@ -187,12 +257,129 @@ const LaptopsPage = () => {
                     <SelectContent>{statuses.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                   </Select>
                 </td>
-                <td className="p-3"><Button variant="ghost" size="icon" onClick={() => remove(l.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button></td>
+                <td className="p-3">
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => openEdit(l)} title="Edit">
+                      <Pencil className="w-4 h-4 text-primary" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => remove(l.id)} title="Hapus">
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </Card>
+
+      {/* --- Edit Dialog --- */}
+      <Dialog open={!!editingItem} onOpenChange={(open) => !open && closeEdit()}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Laptop</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={saveEdit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <Label>Nama *</Label>
+                <Input
+                  required
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label>Brand</Label>
+                <Input
+                  value={editForm.brand}
+                  onChange={(e) => setEditForm({ ...editForm, brand: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label>Processor</Label>
+                <Input
+                  value={editForm.processor}
+                  onChange={(e) => setEditForm({ ...editForm, processor: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label>RAM</Label>
+                <Input
+                  value={editForm.ram}
+                  onChange={(e) => setEditForm({ ...editForm, ram: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label>Harga Harian (Rp)</Label>
+                <Input
+                  type="number"
+                  value={editForm.price_daily}
+                  onChange={(e) => setEditForm({ ...editForm, price_daily: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label>Foto laptop</Label>
+              <div className="flex items-start gap-3 mt-1.5">
+                {editForm.photo_url ? (
+                  <div className="relative">
+                    <img src={editForm.photo_url} alt="Preview" className="w-28 h-20 object-cover rounded-lg border border-border" />
+                    <button
+                      type="button"
+                      onClick={() => setEditForm({ ...editForm, photo_url: "" })}
+                      className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 hover:opacity-90"
+                      aria-label="Remove"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="w-28 h-20 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-muted text-caption text-xs">
+                    {uploadingEdit ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                    {uploadingEdit ? "Uploading…" : "Upload"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploadingEdit}
+                      onChange={(e) => { const f = e.target.files?.[0]; if (f) handleEditUpload(f); }}
+                    />
+                  </label>
+                )}
+                <Input
+                  value={editForm.photo_url}
+                  onChange={(e) => setEditForm({ ...editForm, photo_url: e.target.value })}
+                  placeholder="…or paste URL https://"
+                  className="flex-1"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={closeEdit}>
+                Batal
+              </Button>
+              <Button type="submit" disabled={savingEdit}>
+                {savingEdit ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Menyimpan...
+                  </>
+                ) : (
+                  "Simpan Perubahan"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

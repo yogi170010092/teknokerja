@@ -1,1 +1,4 @@
-project_id = "immtgthetysrvyrdgydl"
+project_id = "zosbgotzohjkzthrdliv"
+
+[functions.check-expiring-rentals]
+verify_jwt = false

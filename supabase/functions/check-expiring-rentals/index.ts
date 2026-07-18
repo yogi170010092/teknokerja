@@ -7,7 +7,7 @@ const corsHeaders = {
 };
 
 const FONNTE_TOKEN = Deno.env.get("FONNTE_TOKEN");
-const ADMIN_WHATSAPP = "6285738073754";
+const ADMIN_WHATSAPP = "6283891088084";
 
 const REMINDER_HOURS_BEFORE = 4;
 const CATCH_UP_HOURS = 24;

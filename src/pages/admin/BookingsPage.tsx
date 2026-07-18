@@ -149,6 +149,18 @@ const BookingsPage = () => {
     };
   }, []);
 
+  const updateStatus = async (id: string, status: Status) => {
+  const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+  if (error)
+    return toast({
+      title: "Update failed",
+      description: error.message,
+      variant: "destructive",
+    });
+  setItems((it) => it.map((b) => (b.id === id ? { ...b, status } : b)));
+  toast({ title: "Status diperbarui" });
+};
+
   const remove = async (id: string, customerName: string) => {
     if (
       !confirm(

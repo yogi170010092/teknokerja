@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 
@@ -46,8 +52,8 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     const next: Role = roles.includes("super_admin")
       ? "super_admin"
       : roles.includes("staff")
-      ? "staff"
-      : null;
+        ? "staff"
+        : null;
     console.log("[AdminAuth] USER_ID", uid, "rows:", data, "ROLE", next);
     setRole(next);
     setRoleLoading(false);
@@ -56,10 +62,17 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((evt, s) => {
       console.log("[AdminAuth] onAuthStateChange", evt, "user:", s?.user?.id);
-      setRoleLoading(!!s?.user);
       setSession(s);
       setUser(s?.user ?? null);
-      setTimeout(() => loadRole(s?.user?.id), 0);
+
+      // Hanya reload role kalau user ID-nya benar-benar berubah (login/logout beneran),
+      // BUKAN setiap kali token di-refresh diam-diam pas tab balik fokus.
+      setUser((prevUser) => {
+        if (prevUser?.id !== s?.user?.id) {
+          setTimeout(() => loadRole(s?.user?.id), 0);
+        }
+        return s?.user ?? null;
+      });
     });
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       console.log("[AdminAuth] getSession user:", s?.user?.id);
@@ -71,8 +84,12 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const signOut = async () => { await supabase.auth.signOut(); };
-  const refreshRole = async () => { await loadRole(user?.id); };
+  const signOut = async () => {
+    await supabase.auth.signOut();
+  };
+  const refreshRole = async () => {
+    await loadRole(user?.id);
+  };
 
   const isAdmin = role === "super_admin" || role === "staff";
   const isSuperAdmin = role === "super_admin";
@@ -81,14 +98,24 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   console.log("USER_ID", user?.id);
   console.log("ROLE", role);
   console.log("IS_ADMIN", isAdmin);
-  console.log("[AdminAuth] state →", { userId: user?.id, role, isAdmin, loading });
+  console.log("[AdminAuth] state →", {
+    userId: user?.id,
+    role,
+    isAdmin,
+    loading,
+  });
 
   return (
     <Ctx.Provider
       value={{
-        user, session, role, loading,
-        isAdmin, isSuperAdmin,
-        signOut, refreshRole,
+        user,
+        session,
+        role,
+        loading,
+        isAdmin,
+        isSuperAdmin,
+        signOut,
+        refreshRole,
       }}
     >
       {children}

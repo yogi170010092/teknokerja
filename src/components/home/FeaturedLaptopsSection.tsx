@@ -120,15 +120,27 @@ const FeaturedLaptopsSection = () => {
                       </p>
 
                       {isReady ? (
-                        <a
-                          href={waUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-1.5 w-full text-xs font-semibold py-2.5 rounded-lg bg-[hsl(var(--whatsapp))] text-white hover:opacity-90 transition-opacity"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5" />
-                          {t("featured.rentNow")}
-                        </a>
+                        <div className="grid grid-cols-2 gap-2">
+                          {/* WhatsApp */}
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 rounded-lg border border-green-500 text-green-600 py-2 text-sm font-medium hover:bg-green-50 transition"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            WhatsApp
+                          </a>
+
+                          {/* Rent Now */}
+                          <Link
+                            to={lp(`/rent/${p.id}`)}
+                            className="flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-2 text-sm font-medium hover:opacity-90 transition"
+                          >
+                            <ArrowRight className="w-4 h-4" />
+                            Rent Now
+                          </Link>
+                        </div>
                       ) : (
                         <button
                           disabled

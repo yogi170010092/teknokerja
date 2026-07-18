@@ -22,6 +22,8 @@ import FloatingWhatsApp from "./components/interactive/FloatingWhatsApp";
 import ScrollCTA from "./components/interactive/ScrollCTA";
 import MobileBottomCTA from "./components/interactive/MobileBottomCTA";
 import FloatingLanguageSwitcher from "./components/interactive/FloatingLanguageSwitcher";
+// import RentLaptop from "./pages/RentLaptop";
+import BookingForm from "./pages/BookingForm";
 
 // Admin
 import AdminLayout from "./components/admin/AdminLayout";
@@ -47,6 +49,7 @@ const SiteRoutes = () => (
     <Route path="sewa-laptop" element={<SewaLaptop />} />
     <Route path="laptops" element={<LaptopStock />} />
     <Route path="laptop-stock" element={<LaptopStock />} />
+    {/* <Route path="rent/:id" element={<RentLaptop />} /> */}
     <Route path="tentang" element={<Tentang />} />
     <Route path="kontak" element={<Kontak />} />
     <Route path="syarat-ketentuan" element={<SyaratKetentuan />} />
@@ -59,6 +62,7 @@ const SiteRoutes = () => (
     <Route path="artikel/*" element={<Navigate to="/blog" replace />} />
     <Route path="kategori/*" element={<Navigate to="/blog" replace />} />
     <Route path="*" element={<NotFound />} />
+    <Route path="/rent/:id" element={<BookingForm />} />
   </Routes>
 );
 

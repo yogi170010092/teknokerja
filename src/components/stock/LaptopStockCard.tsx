@@ -1,7 +1,9 @@
-import { ExternalLink, MessageCircle } from "lucide-react";
+import { ExternalLink, MessageCircle, ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { LaptopProduct } from "@/lib/scrapeProducts";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { buildWhatsAppUrl, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
+
 
 interface Props {
   product: LaptopProduct;
@@ -58,27 +60,26 @@ const LaptopStockCard = ({ product }: Props) => {
           <p className="text-lg font-bold text-headline mb-3">
             {product.price}
           </p>
-          <div className="flex gap-2">
-            {product.detailUrl && product.detailUrl !== "#" && (
-              <a
-                href={product.detailUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg border border-border hover:bg-muted transition-colors"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                {t("stock.viewDetail")}
-              </a>
-            )}
+          <div className="grid grid-cols-2 gap-2">
+            {/* WhatsApp */}
             <a
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg bg-[hsl(var(--whatsapp))] text-white hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-1.5 text-xs font-medium py-2.5 rounded-lg border border-[hsl(var(--whatsapp))] text-[hsl(var(--whatsapp))] hover:bg-[hsl(var(--whatsapp)/0.08)] transition-colors"
             >
               <MessageCircle className="w-3.5 h-3.5" />
-              {t("stock.rent")}
+              WhatsApp
             </a>
+
+            {/* Rent Now */}
+            <Link
+              to={`/rent/${product.id}`}
+              className="flex items-center justify-center gap-1.5 text-xs font-medium py-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              Rent Now
+            </Link>
           </div>
         </div>
       </div>

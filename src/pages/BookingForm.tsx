@@ -10,7 +10,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLaptopProducts } from "@/hooks/useLaptopProducts";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { toast } from "sonner";
-import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+  FileText,
+  Camera,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface FormData {
   name: string;
@@ -80,6 +93,7 @@ const BookingForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingConflict, setIsCheckingConflict] = useState(false);
+  const [showTermsDialog, setShowTermsDialog] = useState(true);
 
   // --- Hitung durasi & total harga otomatis ---
   const { days, totalPrice, priceLabel } = useMemo(() => {
@@ -546,6 +560,65 @@ const BookingForm = () => {
       </main>
 
       <Footer />
+
+      <Dialog open={showTermsDialog} onOpenChange={setShowTermsDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg">
+              Sebelum Lanjut Booking
+            </DialogTitle>
+          </DialogHeader>
+
+          <p className="text-sm text-muted-foreground -mt-2">
+            Biar unit laptopnya langsung kami amankan untuk Kakak, setelah isi
+            form ini nanti admin kami akan follow-up via WhatsApp untuk minta:
+          </p>
+
+          <div className="space-y-4 py-2">
+            <div className="flex gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-headline">Foto KTP</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Untuk mengisi surat perjanjian sewa. KTP asli mohon dibawa
+                  saat pengambilan unit.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Camera className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-headline">
+                  Dokumentasi Serah Terima
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Saat pengambilan unit di toko, akan ada foto Kakak bersama
+                  laptopnya.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-xs text-muted-foreground border-t border-border pt-3">
+            Tenang, ini cuma info awal ya Kak — nggak perlu upload apapun
+            sekarang. Tinggal lanjutkan isi form di bawah 👇
+          </p>
+
+          <DialogFooter>
+            <Button
+              className="w-full"
+              onClick={() => setShowTermsDialog(false)}
+            >
+              Saya Mengerti
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

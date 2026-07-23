@@ -609,6 +609,12 @@ const BookingForm = () => {
             sekarang. Tinggal lanjutkan isi form di bawah 👇
           </p>
 
+          <p className="text-xs text-muted-foreground">
+            🔒 Kami menjamin kerahasiaan data KTP Anda sesuai dengan kebijakan
+            privasi yang berlaku dan hanya digunakan untuk kebutuhan
+            administrasi sewa.
+          </p>
+
           <DialogFooter>
             <Button
               className="w-full"

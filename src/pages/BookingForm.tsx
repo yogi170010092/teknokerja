@@ -47,6 +47,7 @@ interface FormErrors {
   endDate?: string;
   dates?: string;
   emergencyContact?: string;
+  socialMedia?: string;
 }
 
 const formatRp = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
@@ -100,10 +101,10 @@ const BookingForm = () => {
     if (!form.startDate || !form.endDate || !laptop) {
       return { days: 0, totalPrice: 0, priceLabel: "" };
     }
-    const start = new Date(form.startDate);
-    const end = new Date(form.endDate);
-    const diffDays =
-      Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
+    const start = new Date(`${form.startDate}T${form.startTime || "00:00"}`);
+const end = new Date(`${form.endDate}T${form.endTime || "00:00"}`);
+const diffMs = end.getTime() - start.getTime();
+const diffDays = Math.ceil(diffMs / 86400000);
 
     if (diffDays <= 0) return { days: 0, totalPrice: 0, priceLabel: "" };
 
@@ -151,6 +152,10 @@ const BookingForm = () => {
     } else if (!/^[0-9+\s-]{8,15}$/.test(form.emergencyContact.trim())) {
       newErrors.emergencyContact = "Nomor kontak darurat tidak valid";
     }
+
+    if (!form.socialMedia.trim()) {
+    newErrors.socialMedia = "Link sosial media wajib diisi";
+    } 
 
     if (!form.startDate) newErrors.startDate = "Tanggal mulai wajib diisi";
     if (!form.endDate) newErrors.endDate = "Tanggal selesai wajib diisi";
@@ -265,22 +270,42 @@ const BookingForm = () => {
 
       if (error) throw error;
 
+      const formatDateID = (dateStr: string) =>
+        new Date(`${dateStr}T00:00:00`).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+
       const waMessage = [
-        `Halo TeknoKerja, saya baru saja booking laptop:`,
-        `Laptop: ${laptop.name}`,
-        `Nama: ${form.name.trim()}`,
-        `Mulai: ${form.startDate} jam ${form.startTime}`,
-        `Selesai: ${form.endDate} jam ${form.endTime} (${days} hari)`,
-        `Estimasi total: ${formatRp(totalPrice)}`,
-        `Alamat: ${form.address.trim()}`,
-        `Kontak Darurat: ${form.emergencyContact.trim()}`,
-        form.socialMedia.trim()
-          ? `Sosial Media: ${form.socialMedia.trim()}`
-          : null,
-        `Mohon konfirmasi ya, terima kasih!`,
-      ]
-        .filter(Boolean)
-        .join("\n");
+        `Halo TeknoKerja 👋, saya baru saja booking laptop lewat website:`,
+        ``,
+        `💻 *Laptop*`,
+        laptop.name,
+        ``,
+        `🙋 *Nama*`,
+        form.name.trim(),
+        ``,
+        `🟢 *Mulai Sewa*`,
+        `${formatDateID(form.startDate)}, ${form.startTime}`,
+        ``,
+        `🔴 *Selesai Sewa*`,
+        `${formatDateID(form.endDate)}, ${form.endTime} (${days} hari)`,
+        ``,
+        `💰 *Estimasi Total*`,
+        formatRp(totalPrice),
+        ``,
+        `📍 *Alamat*`,
+        form.address.trim(),
+        ``,
+        `📞 *Kontak Darurat*`,
+        form.emergencyContact.trim(),
+        ...(form.socialMedia.trim()
+          ? [``, `📱 *Sosial Media*`, form.socialMedia.trim()]
+          : []),
+        ``,
+        `Mohon konfirmasi ya, terima kasih! 🙏`,
+      ].join("\n");
 
       const waUrl = buildWhatsAppUrl(waMessage);
 
@@ -497,19 +522,23 @@ const BookingForm = () => {
             </div>
 
             <div>
-              <Label htmlFor="socialMedia">
-                Link Sosial Media Aktif (opsional)
-              </Label>
-              <Input
-                id="socialMedia"
-                value={form.socialMedia}
-                onChange={(e) => handleChange("socialMedia", e.target.value)}
-                placeholder="Instagram / Facebook / LinkedIn (link atau username)"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Contoh: instagram.com/namakamu
-              </p>
-            </div>
+            <Label htmlFor="socialMedia">
+              Link Sosial Media Aktif *
+            </Label>
+            <Input
+              id="socialMedia"
+              value={form.socialMedia}
+              onChange={(e) => handleChange("socialMedia", e.target.value)}
+              placeholder="Instagram / Facebook / LinkedIn (link atau username)"
+              className={errors.socialMedia ? "border-destructive" : ""}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Contoh: instagram.com/namakamu
+            </p>
+            {errors.socialMedia && (
+              <p className="text-sm text-destructive mt-1">{errors.socialMedia}</p>
+            )}
+          </div>
 
             <div>
               <Label htmlFor="emergencyContact">

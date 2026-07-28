@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom";
-import { MessageCircle, ArrowRight, Cpu, MemoryStick, HardDrive } from "lucide-react";
+import {
+  MessageCircle,
+  ArrowRight,
+  Cpu,
+  MemoryStick,
+  HardDrive,
+} from "lucide-react";
 import { useLaptopProducts } from "@/hooks/useLaptopProducts";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { buildWhatsAppUrl, getDefaultWhatsAppMessage } from "@/lib/whatsapp";
@@ -14,10 +20,30 @@ const FeaturedLaptopsSection = () => {
   const { data, isLoading } = useLaptopProducts();
   const items = (data ?? []).slice(0, 6);
 
-  const STATUS_STYLES: Record<string, { dot: string; label: string; color: string }> = {
-    ready:       { dot: "bg-green-500",  label: t("featured.statusReady"),  color: "text-green-700 bg-green-50" },
-    rented:      { dot: "bg-red-500",    label: t("featured.statusRented"), color: "text-red-700 bg-red-50" },
-    maintenance: { dot: "bg-orange-500", label: t("featured.statusMaint"),  color: "text-orange-700 bg-orange-50" },
+  const STATUS_STYLES: Record<
+    string,
+    { dot: string; label: string; color: string }
+  > = {
+    ready: {
+      dot: "bg-green-500",
+      label: t("featured.statusReady"),
+      color: "text-green-700 bg-green-50",
+    },
+    rented: {
+      dot: "bg-red-500",
+      label: t("featured.statusRented"),
+      color: "text-red-700 bg-red-50",
+    },
+    maintenance: {
+      dot: "bg-orange-500",
+      label: t("featured.statusMaint"),
+      color: "text-orange-700 bg-orange-50",
+    },
+    out_of_stock: {
+      dot: "bg-zinc-500",
+      label: "Stok Habis",
+      color: "text-zinc-700 bg-zinc-100",
+    },
   };
 
   return (
@@ -31,9 +57,7 @@ const FeaturedLaptopsSection = () => {
             <h2 className="text-2xl md:text-4xl font-extrabold text-headline tracking-tight">
               {t("featured.title")}
             </h2>
-            <p className="text-body mt-2 max-w-xl">
-              {t("featured.subtitle")}
-            </p>
+            <p className="text-body mt-2 max-w-xl">{t("featured.subtitle")}</p>
           </div>
           <Link
             to={lp("/laptops")}
@@ -43,11 +67,13 @@ const FeaturedLaptopsSection = () => {
           </Link>
         </div>
 
-
         {isLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-2xl border border-border overflow-hidden">
+              <div
+                key={i}
+                className="rounded-2xl border border-border overflow-hidden"
+              >
                 <Skeleton className="aspect-[4/3]" />
                 <div className="p-4 space-y-2">
                   <Skeleton className="h-3 w-16" />
@@ -58,7 +84,9 @@ const FeaturedLaptopsSection = () => {
             ))}
           </div>
         ) : items.length === 0 ? (
-          <p className="text-center text-muted-foreground py-12">{t("featured.empty")}</p>
+          <p className="text-center text-muted-foreground py-12">
+            {t("featured.empty")}
+          </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             {items.map((p) => {
@@ -66,14 +94,18 @@ const FeaturedLaptopsSection = () => {
               const style = STATUS_STYLES[status] ?? STATUS_STYLES.ready;
               const isReady = status === "ready";
               const waUrl = buildWhatsAppUrl(
-                `${getDefaultWhatsAppMessage(locale)} (${p.name})`
+                `${getDefaultWhatsAppMessage(locale)} (${p.name})`,
               );
               const dailyText = p.priceDaily ? formatRp(p.priceDaily) : p.price;
 
               return (
                 <article
                   key={p.id}
-                  className="group bg-card rounded-2xl border border-border shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
+                  className={`group bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col transition-all duration-300 ${
+                    isReady
+                      ? "hover:shadow-lg hover:-translate-y-1"
+                      : "opacity-60 saturate-50"
+                  }`}
                 >
                   <div className="relative aspect-[4/3] bg-muted/30 flex items-center justify-center p-4 overflow-hidden">
                     <img
@@ -82,10 +114,16 @@ const FeaturedLaptopsSection = () => {
                       loading="lazy"
                       width={400}
                       height={300}
-                      className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      className={`max-w-full max-h-full object-contain transition-all duration-500 ${
+                        isReady ? "group-hover:scale-105" : "grayscale"
+                      }`}
                     />
-                    <span className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${style.color}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                    <span
+                      className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${style.color}`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${style.dot}`}
+                      />
                       {style.label}
                     </span>
                   </div>
@@ -101,7 +139,8 @@ const FeaturedLaptopsSection = () => {
                     {p.specs.length > 0 && (
                       <ul className="space-y-1 text-xs text-body mb-4">
                         {p.specs.slice(0, 3).map((spec, i) => {
-                          const Icon = i === 0 ? Cpu : i === 1 ? MemoryStick : HardDrive;
+                          const Icon =
+                            i === 0 ? Cpu : i === 1 ? MemoryStick : HardDrive;
                           return (
                             <li key={i} className="flex items-center gap-1.5">
                               <Icon className="w-3 h-3 text-muted-foreground flex-shrink-0" />
@@ -113,10 +152,15 @@ const FeaturedLaptopsSection = () => {
                     )}
 
                     <div className="mt-auto pt-3 border-t border-border">
-                      <p className="text-[11px] text-muted-foreground">{t("featured.from")}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {t("featured.from")}
+                      </p>
                       <p className="text-lg font-extrabold text-headline mb-3">
                         {dailyText}
-                        <span className="text-xs font-medium text-muted-foreground"> {t("featured.perDay")}</span>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {" "}
+                          {t("featured.perDay")}
+                        </span>
                       </p>
 
                       {isReady ? (
@@ -165,7 +209,6 @@ const FeaturedLaptopsSection = () => {
             {t("featured.viewAll")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-
       </div>
     </section>
   );

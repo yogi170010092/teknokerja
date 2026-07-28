@@ -56,6 +56,11 @@ const ymd = (d: Date) => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+// Parse string "YYYY-MM-DD" jadi Date di waktu lokal (bukan UTC)
+const parseLocalDate = (dateStr: string) => {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
 
 const emptyManualForm = {
   laptopId: "",
@@ -129,8 +134,8 @@ const CalendarPage = () => {
     const map = new Map<string, Booking[]>();
     items.forEach((b) => {
       if (!b.start_date) return;
-      const start = new Date(b.start_date);
-      const end = b.end_date ? new Date(b.end_date) : start;
+      const start = parseLocalDate(b.start_date);
+      const end = b.end_date ? parseLocalDate(b.end_date) : start;
       for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
         if (d < monthStart || d > monthEnd) continue;
         const k = ymd(d);

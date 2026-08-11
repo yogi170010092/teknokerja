@@ -151,12 +151,8 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
 
                   <div className="flex flex-wrap gap-2">
                     {[
-                      "Badung",
                       "Kuta",
                       "Seminyak",
-                      "Canggu",
-                      "Jimbaran",
-                      "Nusa Dua",
                     ].map((area) => (
                       <span
                         key={area}
@@ -174,7 +170,7 @@ const GoogleMapsSection = ({ variant = "section" }: Props) => {
                   </p>
 
                   <div className="flex flex-wrap gap-2">
-                    {["Uluwatu", "Pecatu", "Tabanan", "Bangli", "Buleleng"].map((area) => (
+                    {["Badung", "Jimbaran", "Nusa Dua", "Canggu","Uluwatu", "Pecatu", "Tabanan", "Bangli", "Buleleng"].map((area) => (
                       <span
                         key={area}
                         className="px-3 py-1 rounded-full bg-orange-50 text-orange-700 border border-orange-200 text-xs"

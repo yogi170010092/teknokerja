@@ -83,13 +83,13 @@ const LaptopRentalSection = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-body justify-center lg:justify-start">
-              <span className="inline-flex items-center gap-2 text-sm">
+              {/* <span className="inline-flex items-center gap-2 text-sm">
                 <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
                 <span className="font-semibold text-headline">{t("hero.location")}</span>
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--cta-green))] bg-[hsl(var(--cta-green)/0.1)] px-2.5 py-1 rounded-full">
                 {t("hero.delivery")}
-              </span>
+              </span> */}
             </div>
 
           </div>

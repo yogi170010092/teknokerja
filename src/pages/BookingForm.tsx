@@ -270,6 +270,11 @@ const diffDays = Math.ceil(diffMs / 86400000);
 
       if (error) throw error;
 
+      await supabase
+      .from("laptops")
+      .update({ status: "rented" })
+      .eq("id", laptop.dbId);
+
       const formatDateID = (dateStr: string) =>
         new Date(`${dateStr}T00:00:00`).toLocaleDateString("id-ID", {
           day: "numeric",

@@ -150,6 +150,8 @@ const BookingsPage = () => {
   }, []);
 
   const updateStatus = async (id: string, status: Status) => {
+  const booking = items.find((b) => b.id === id);
+
   const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
   if (error)
     return toast({
@@ -157,8 +159,31 @@ const BookingsPage = () => {
       description: error.message,
       variant: "destructive",
     });
+
   setItems((it) => it.map((b) => (b.id === id ? { ...b, status } : b)));
   toast({ title: "Status diperbarui" });
+
+  if (!booking?.laptop_id) return;
+
+  if (status === "cancelled" || status === "completed") {
+    // Cek apakah masih ada booking aktif lain untuk laptop yang sama
+    // sebelum balikin status ke "ready".
+    const { data: activeBookings } = await supabase
+      .from("bookings")
+      .select("id")
+      .eq("laptop_id", booking.laptop_id)
+      .in("status", ["pending", "confirmed", "active"])
+      .limit(1);
+
+    const hasActiveBooking = (activeBookings?.length ?? 0) > 0;
+
+    if (!hasActiveBooking) {
+      await supabase.from("laptops").update({ status: "ready" }).eq("id", booking.laptop_id);
+    }
+  } else if (status === "pending" || status === "confirmed" || status === "active") {
+    // Booking diaktifkan (lagi) -> pastikan laptop terkunci sebagai "rented".
+    await supabase.from("laptops").update({ status: "rented" }).eq("id", booking.laptop_id);
+  }
 };
 
   const remove = async (id: string, customerName: string) => {

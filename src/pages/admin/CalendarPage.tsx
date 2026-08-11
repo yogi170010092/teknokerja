@@ -250,6 +250,12 @@ const CalendarPage = () => {
     }
 
     toast({ title: "Booking manual berhasil ditambahkan" });
+
+
+    if (manualForm.laptopId) {
+      await supabase.from("laptops").update({ status: "rented" }).eq("id", manualForm.laptopId);
+    }
+
     closeAddDialog();
     loadBookings();
   };

@@ -15,6 +15,8 @@ import type { Database } from "@/integrations/supabase/types";
 import {
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   AlertTriangle,
   MessageCircle,
   Download,
@@ -81,12 +83,15 @@ const overlaps = (a: Booking, b: Booking) => {
   return a.start_date <= b.end_date && b.start_date <= a.end_date;
 };
 
+const ITEMS_PER_PAGE = 15;
+
 const BookingsPage = () => {
   const [items, setItems] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Status | "all">("all");
   const [open, setOpen] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
   const load = async () => {
     setLoading(true);
@@ -150,41 +155,41 @@ const BookingsPage = () => {
   }, []);
 
   const updateStatus = async (id: string, status: Status) => {
-  const booking = items.find((b) => b.id === id);
+    const booking = items.find((b) => b.id === id);
 
-  const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
-  if (error)
-    return toast({
-      title: "Update failed",
-      description: error.message,
-      variant: "destructive",
-    });
+    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+    if (error)
+      return toast({
+        title: "Update failed",
+        description: error.message,
+        variant: "destructive",
+      });
 
-  setItems((it) => it.map((b) => (b.id === id ? { ...b, status } : b)));
-  toast({ title: "Status diperbarui" });
+    setItems((it) => it.map((b) => (b.id === id ? { ...b, status } : b)));
+    toast({ title: "Status diperbarui" });
 
-  if (!booking?.laptop_id) return;
+    if (!booking?.laptop_id) return;
 
-  if (status === "cancelled" || status === "completed") {
-    // Cek apakah masih ada booking aktif lain untuk laptop yang sama
-    // sebelum balikin status ke "ready".
-    const { data: activeBookings } = await supabase
-      .from("bookings")
-      .select("id")
-      .eq("laptop_id", booking.laptop_id)
-      .in("status", ["pending", "confirmed", "active"])
-      .limit(1);
+    if (status === "cancelled" || status === "completed") {
+      // Cek apakah masih ada booking aktif lain untuk laptop yang sama
+      // sebelum balikin status ke "ready".
+      const { data: activeBookings } = await supabase
+        .from("bookings")
+        .select("id")
+        .eq("laptop_id", booking.laptop_id)
+        .in("status", ["pending", "confirmed", "active"])
+        .limit(1);
 
-    const hasActiveBooking = (activeBookings?.length ?? 0) > 0;
+      const hasActiveBooking = (activeBookings?.length ?? 0) > 0;
 
-    if (!hasActiveBooking) {
-      await supabase.from("laptops").update({ status: "ready" }).eq("id", booking.laptop_id);
+      if (!hasActiveBooking) {
+        await supabase.from("laptops").update({ status: "ready" }).eq("id", booking.laptop_id);
+      }
+    } else if (status === "pending" || status === "confirmed" || status === "active") {
+      // Booking diaktifkan (lagi) -> pastikan laptop terkunci sebagai "rented".
+      await supabase.from("laptops").update({ status: "rented" }).eq("id", booking.laptop_id);
     }
-  } else if (status === "pending" || status === "confirmed" || status === "active") {
-    // Booking diaktifkan (lagi) -> pastikan laptop terkunci sebagai "rented".
-    await supabase.from("laptops").update({ status: "rented" }).eq("id", booking.laptop_id);
-  }
-};
+  };
 
   const remove = async (id: string, customerName: string) => {
     if (
@@ -225,17 +230,48 @@ const BookingsPage = () => {
     return set;
   }, [items]);
 
-  const filtered = items.filter((b) => {
-    if (filter !== "all" && b.status !== filter) return false;
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return (
-      b.customer_name.toLowerCase().includes(q) ||
-      b.whatsapp.toLowerCase().includes(q) ||
-      (b.laptop_name ?? "").toLowerCase().includes(q) ||
-      (b.email ?? "").toLowerCase().includes(q)
-    );
-  });
+  // Status "aktif" (pending/confirmed/active) ditaruh duluan, baru yang sudah selesai/batal.
+  // Dalam grup yang sama, tetap urut dari yang terbaru.
+  const statusPriority: Record<string, number> = {
+    pending: 0,
+    confirmed: 0,
+    active: 0,
+    completed: 1,
+    cancelled: 1,
+  };
+
+  const filtered = useMemo(() => {
+    return items
+      .filter((b) => {
+        if (filter !== "all" && b.status !== filter) return false;
+        if (!search) return true;
+        const q = search.toLowerCase();
+        return (
+          b.customer_name.toLowerCase().includes(q) ||
+          b.whatsapp.toLowerCase().includes(q) ||
+          (b.laptop_name ?? "").toLowerCase().includes(q) ||
+          (b.email ?? "").toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => {
+        const pa = statusPriority[a.status] ?? 2;
+        const pb = statusPriority[b.status] ?? 2;
+        if (pa !== pb) return pa - pb;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+  }, [items, filter, search]);
+
+  // Reset ke halaman 1 setiap kali filter/pencarian berubah
+  useEffect(() => {
+    setPage(1);
+  }, [search, filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   return (
     <div className="space-y-4">
@@ -308,14 +344,14 @@ const BookingsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 && !loading && (
+            {paginated.length === 0 && !loading && (
               <tr>
                 <td colSpan={9} className="p-8 text-center text-caption">
                   Tidak ada booking.
                 </td>
               </tr>
             )}
-            {filtered.map((b) => {
+            {paginated.map((b) => {
               const expanded = open === b.id;
               const conflict = conflictIds.has(b.id);
               return (
@@ -425,6 +461,60 @@ const BookingsPage = () => {
           </tbody>
         </table>
       </Card>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <p className="text-xs text-caption">
+            Halaman {currentPage} dari {totalPages}
+          </p>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((p) => {
+                // tampilkan halaman pertama, terakhir, dan sekitar halaman aktif
+                return (
+                  p === 1 ||
+                  p === totalPages ||
+                  Math.abs(p - currentPage) <= 1
+                );
+              })
+              .map((p, idx, arr) => (
+                <Fragment key={p}>
+                  {idx > 0 && arr[idx - 1] !== p - 1 && (
+                    <span className="px-1 text-caption text-xs">…</span>
+                  )}
+                  <Button
+                    variant={p === currentPage ? "default" : "outline"}
+                    size="icon"
+                    className="h-8 w-8 text-xs"
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                </Fragment>
+              ))}
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

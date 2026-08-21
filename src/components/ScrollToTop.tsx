@@ -32,6 +32,10 @@ const ScrollToTop = () => {
     });
   };
 
+  // Jangan tampilkan di halaman admin — sering numpuk dengan pagination,
+  // dropdown, atau kontrol lain di dashboard.
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <>
       {isVisible && (

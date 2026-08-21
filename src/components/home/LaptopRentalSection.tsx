@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { MessageCircle, Laptop, Building, Users, ArrowRight, MapPin } from "lucide-react";
+import { MessageCircle, Laptop, RefreshCw, Building, Users, ArrowRight, MapPin } from "lucide-react";
 import { useScrollZoom } from "@/hooks/useScrollZoom";
 import Hero3DCard from "./Hero3DCard";
 import FloatingElement from "./FloatingElement";
@@ -10,6 +10,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { useReadyLaptopCount } from "@/hooks/useReadyLaptopCount";
+
 
 const HERO_WA_MESSAGE = "Hi TeknoKerja, I'm interested in renting a laptop in Bali.";
 
@@ -82,15 +83,45 @@ const LaptopRentalSection = () => {
               </Link>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-body justify-center lg:justify-start">
-              {/* <span className="inline-flex items-center gap-2 text-sm">
-                <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-                <span className="font-semibold text-headline">{t("hero.location")}</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--cta-green))] bg-[hsl(var(--cta-green)/0.1)] px-2.5 py-1 rounded-full">
-                {t("hero.delivery")}
-              </span> */}
-            </div>
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-body">
+
+              <span className="text-muted-foreground">|</span>
+  <span className="inline-flex items-center gap-1.5 text-sm">
+    <span>⭐</span>
+    <span className="font-semibold text-headline">4.9/5 Rating</span>
+  </span>
+
+  {/* <span className="text-muted-foreground">|</span> */}
+
+  {/* <span className="inline-flex items-center gap-1.5 text-sm">
+    <span>🛡️</span>
+    <span className="font-semibold text-headline">Asuransi Penuh</span>
+  </span> */}
+
+  <span className="text-muted-foreground">|</span>
+
+  <span className="inline-flex items-center gap-1.5 text-sm">
+    <span>⚡</span>
+    <span className="font-semibold text-headline">Respon Cepat</span>
+  </span>
+
+  <span className="text-muted-foreground">|</span>
+
+  <span className="inline-flex items-center gap-1.5 text-sm">
+    <span>⚙️</span>
+    <span className="font-semibold text-headline">Dukungan Teknis 24/7</span>
+  </span>
+
+  <span className="text-muted-foreground">|</span>
+
+  {/* <span className="inline-flex items-center gap-1.5 text-sm">
+    <span>🧼</span>
+    <span className="font-semibold text-headline">Steril & Bersih</span>
+  </span> */}
+
+  {/* <span className="text-muted-foreground">|</span> */}
+
+</div>
 
           </div>
 

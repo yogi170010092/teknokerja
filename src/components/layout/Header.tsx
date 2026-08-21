@@ -82,9 +82,9 @@ const Header = () => {
               <Link to={lp("/how-it-works")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
                 {t("nav.howItWorks")}
               </Link>
-              <Link to={lp("/faq")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
-                {t("nav.faq")}
-              </Link>
+               <Link to={lp("/laptop-stock")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
+                  {t("nav.stock")}
+                </Link>
               <Link to={lp("/blog")} className="text-base font-semibold text-headline hover:text-primary transition-colors">
                 Blog
               </Link>

@@ -2,3 +2,6 @@ project_id = "zosbgotzohjkzthrdliv"
 
 [functions.check-expiring-rentals]
 verify_jwt = false
+
+[functions.prey-devices]
+verify_jwt = true

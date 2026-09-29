@@ -22,7 +22,7 @@ type LStatus = Database["public"]["Enums"]["laptop_status"];
 
 const statuses: LStatus[] = ["ready", "rented", "maintenance", "out_of_stock"];
 
-const emptyForm = { name: "", brand: "", processor: "", ram: "", price_daily: "", photo_url: "" };
+const emptyForm = { name: "", unit_id: "", brand: "", processor: "", ram: "", price_daily: "", photo_url: "" };
 
 const LaptopsPage = () => {
   const [items, setItems] = useState<Laptop[]>([]);
@@ -90,7 +90,9 @@ const LaptopsPage = () => {
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
-      name: form.name, brand: form.brand || null,
+      name: form.name,
+      unit_id: form.unit_id || null,
+      brand: form.brand || null,
       processor: form.processor || null, ram: form.ram || null,
       price_daily: form.price_daily ? Number(form.price_daily) : null,
       photo_url: form.photo_url || null,
@@ -108,6 +110,7 @@ const LaptopsPage = () => {
     setEditingItem(item);
     setEditForm({
       name: item.name ?? "",
+      unit_id: (item as any).unit_id ?? "",
       brand: item.brand ?? "",
       processor: item.processor ?? "",
       ram: item.ram ?? "",
@@ -139,6 +142,7 @@ const LaptopsPage = () => {
     setSavingEdit(true);
     const payload = {
       name: editForm.name,
+      unit_id: editForm.unit_id || null,
       brand: editForm.brand || null,
       processor: editForm.processor || null,
       ram: editForm.ram || null,
@@ -174,6 +178,10 @@ const LaptopsPage = () => {
         <Card className="p-4">
           <form onSubmit={create} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <div><Label>Nama *</Label><Input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1" /></div>
+            <div>
+              <Label>Unit ID</Label>
+              <Input value={form.unit_id} onChange={(e) => setForm({ ...form, unit_id: e.target.value })} placeholder="Contoh: LEN-022" className="mt-1" />
+            </div>
             <div><Label>Brand</Label><Input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} className="mt-1" /></div>
             <div><Label>Processor</Label><Input value={form.processor} onChange={(e) => setForm({ ...form, processor: e.target.value })} className="mt-1" /></div>
             <div><Label>RAM</Label><Input value={form.ram} onChange={(e) => setForm({ ...form, ram: e.target.value })} className="mt-1" /></div>
@@ -209,6 +217,7 @@ const LaptopsPage = () => {
           <thead className="bg-muted text-left">
             <tr>
               <th className="p-3 font-medium w-20">Foto</th>
+              <th className="p-3 font-medium">Unit ID</th>
               <th className="p-3 font-medium">Nama</th>
               <th className="p-3 font-medium">Brand</th>
               <th className="p-3 font-medium">Spek</th>
@@ -219,7 +228,7 @@ const LaptopsPage = () => {
           </thead>
           <tbody>
             {items.length === 0 && !loading && (
-              <tr><td colSpan={7} className="p-8 text-center text-caption">Belum ada laptop. Klik "Tambah Laptop".</td></tr>
+              <tr><td colSpan={8} className="p-8 text-center text-caption">Belum ada laptop. Klik "Tambah Laptop".</td></tr>
             )}
             {items.map((l) => (
               <tr key={l.id} className="border-t border-border">
@@ -246,6 +255,11 @@ const LaptopsPage = () => {
                       onChange={(e) => { const f = e.target.files?.[0]; if (f) handleRowUpload(l.id, f); e.target.value = ""; }}
                     />
                   </button>
+                </td>
+                <td className="p-3">
+                  <span className="inline-flex items-center px-2 py-1 rounded-md bg-muted text-xs font-mono font-semibold">
+                    {(l as any).unit_id || "—"}
+                  </span>
                 </td>
                 <td className="p-3 font-medium text-headline">{l.name}</td>
                 <td className="p-3">{l.brand ?? "—"}</td>
@@ -288,6 +302,15 @@ const LaptopsPage = () => {
                   required
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label>Unit ID</Label>
+                <Input
+                  value={editForm.unit_id}
+                  onChange={(e) => setEditForm({ ...editForm, unit_id: e.target.value })}
+                  placeholder="Contoh: LEN-022"
                   className="mt-1"
                 />
               </div>

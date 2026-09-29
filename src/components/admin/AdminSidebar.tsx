@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/sidebar";
 import {
   LayoutDashboard, Inbox, Laptop, Star, FileText, Search, Settings,
-  Users, ScrollText, LogOut, Calendar, Instagram,
+  Users, ScrollText, LogOut, Calendar, Instagram, MonitorSmartphone,
 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
@@ -14,6 +14,7 @@ const main = [
   { title: "Booking Requests", url: "/admin/bookings", icon: Inbox },
   { title: "Calendar", url: "/admin/calendar", icon: Calendar },
   { title: "Laptop Stock", url: "/admin/laptops", icon: Laptop },
+  { title: "Device Monitoring", url: "/admin/devices", icon: MonitorSmartphone },
   { title: "Testimonials", url: "/admin/testimonials", icon: Star },
   { title: "Instagram Gallery", url: "/admin/instagram", icon: Instagram },
   { title: "Articles", url: "/admin/articles", icon: FileText },

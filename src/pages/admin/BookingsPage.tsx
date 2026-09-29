@@ -88,6 +88,9 @@ const ITEMS_PER_PAGE = 15;
 const BookingsPage = () => {
   const [items, setItems] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [laptopUnitMap, setLaptopUnitMap] = useState<Record<string, string>>(
+    {},
+  );
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Status | "all">("all");
   const [open, setOpen] = useState<string | null>(null);
@@ -109,9 +112,18 @@ const BookingsPage = () => {
     setItems(data ?? []);
     setLoading(false);
   };
+  const loadLaptopUnits = async () => {
+    const { data } = await supabase.from("laptops").select("id, unit_id");
+    const map: Record<string, string> = {};
+    (data ?? []).forEach((l: any) => {
+      if (l.unit_id) map[l.id] = l.unit_id;
+    });
+    setLaptopUnitMap(map);
+  };
 
   useEffect(() => {
     load();
+    loadLaptopUnits();
   }, []);
 
   // Realtime: toast + sound when new booking arrives
@@ -157,7 +169,10 @@ const BookingsPage = () => {
   const updateStatus = async (id: string, status: Status) => {
     const booking = items.find((b) => b.id === id);
 
-    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+    const { error } = await supabase
+      .from("bookings")
+      .update({ status })
+      .eq("id", id);
     if (error)
       return toast({
         title: "Update failed",
@@ -183,11 +198,21 @@ const BookingsPage = () => {
       const hasActiveBooking = (activeBookings?.length ?? 0) > 0;
 
       if (!hasActiveBooking) {
-        await supabase.from("laptops").update({ status: "ready" }).eq("id", booking.laptop_id);
+        await supabase
+          .from("laptops")
+          .update({ status: "ready" })
+          .eq("id", booking.laptop_id);
       }
-    } else if (status === "pending" || status === "confirmed" || status === "active") {
+    } else if (
+      status === "pending" ||
+      status === "confirmed" ||
+      status === "active"
+    ) {
       // Booking diaktifkan (lagi) -> pastikan laptop terkunci sebagai "rented".
-      await supabase.from("laptops").update({ status: "rented" }).eq("id", booking.laptop_id);
+      await supabase
+        .from("laptops")
+        .update({ status: "rented" })
+        .eq("id", booking.laptop_id);
     }
   };
 
@@ -257,7 +282,9 @@ const BookingsPage = () => {
         const pa = statusPriority[a.status] ?? 2;
         const pb = statusPriority[b.status] ?? 2;
         if (pa !== pb) return pa - pb;
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        return (
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
       });
   }, [items, filter, search]);
 
@@ -396,7 +423,16 @@ const BookingsPage = () => {
                         {b.whatsapp}
                       </a>
                     </td>
-                    <td className="p-3">{b.laptop_name ?? "—"}</td>
+                    <td className="p-3">
+                      <div>
+                        {b.laptop_name ?? "-"}
+                        {b.laptop_id && laptopUnitMap[b.laptop_id] && (
+                          <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono font-semibold">
+                            {laptopUnitMap[b.laptop_id]}
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="p-3 text-xs">
                       {b.start_date ?? "—"} → {b.end_date ?? "—"}
                     </td>
@@ -482,9 +518,7 @@ const BookingsPage = () => {
               .filter((p) => {
                 // tampilkan halaman pertama, terakhir, dan sekitar halaman aktif
                 return (
-                  p === 1 ||
-                  p === totalPages ||
-                  Math.abs(p - currentPage) <= 1
+                  p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1
                 );
               })
               .map((p, idx, arr) => (

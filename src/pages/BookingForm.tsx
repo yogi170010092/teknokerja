@@ -19,6 +19,9 @@ import { useLaptopProducts } from "@/hooks/useLaptopProducts";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { toast } from "sonner";
 import { Loader2, AlertCircle, CheckCircle2, FileText, Camera } from "lucide-react";
+// ASUMSI: sesuaikan path & nama hook dengan LanguageContext.tsx kamu
+import { useLanguage } from "@/i18n/LanguageContext";
+import type { Locale, TranslationKey } from "@/i18n/translations";
 
 interface FormData {
   name: string;
@@ -45,30 +48,121 @@ interface FormData {
   emergencyConsent: boolean;
 }
 
-interface FormErrors {
-  name?: string;
-  idNumber?: string;
-  whatsapp?: string;
-  socialMedia?: string;
-  address?: string;
-  stayType?: string;
-  stayAddress?: string;
-  startDate?: string;
-  endDate?: string;
-  dates?: string;
-  emergencyContactName?: string;
-  emergencyContactRelation?: string;
-  emergencyContact?: string;
-  emergencyContactAddress?: string;
-  emergencyConsent?: string;
-}
+// Error disimpan sebagai KEY terjemahan (bukan teks), supaya ikut berganti
+// kalau user mengubah bahasa setelah error muncul.
+type FormErrors = Partial<
+  Record<
+    | "name"
+    | "idNumber"
+    | "whatsapp"
+    | "socialMedia"
+    | "address"
+    | "stayType"
+    | "stayAddress"
+    | "startDate"
+    | "endDate"
+    | "dates"
+    | "emergencyContactName"
+    | "emergencyContactRelation"
+    | "emergencyContact"
+    | "emergencyContactAddress"
+    | "emergencyConsent",
+    TranslationKey
+  >
+>;
 
 const formatRp = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
 
-const relationOptions = ["Orang Tua", "Pasangan", "Saudara", "Teman", "Rekan Kerja", "Lainnya"];
+// value = yang disimpan ke database (tetap Bahasa Indonesia biar konsisten buat admin)
+// labelKey = yang ditampilkan ke user sesuai bahasa
+const relationOptions: { value: string; labelKey: TranslationKey }[] = [
+  { value: "Orang Tua", labelKey: "bookingForm.relation.parent" },
+  { value: "Pasangan", labelKey: "bookingForm.relation.spouse" },
+  { value: "Saudara", labelKey: "bookingForm.relation.sibling" },
+  { value: "Teman", labelKey: "bookingForm.relation.friend" },
+  { value: "Rekan Kerja", labelKey: "bookingForm.relation.colleague" },
+  { value: "Lainnya", labelKey: "bookingForm.relation.other" },
+];
+
+// Label tarif versi Indonesia, khusus untuk catatan & pesan WhatsApp ke admin
+const rateLabelID = { monthly: "bulanan", weekly: "mingguan", daily: "harian" } as const;
+
+const bookingWhatsAppCopy: Record<Locale, {
+  greeting: string;
+  intro: string;
+  laptop: string;
+  name: string;
+  identityNumber: string;
+  occupation: string;
+  rentalStart: string;
+  rentalEnd: string;
+  days: string;
+  estimatedTotal: string;
+  homeAddress: string;
+  rentalAccommodation: string;
+  roomUnit: string;
+  emergencyContact: string;
+  address: string;
+  socialMedia: string;
+  confirmation: string;
+  notProvided: string;
+}> = {
+  id: {
+    greeting: "Halo TeknoKerja 👋",
+    intro: "saya baru saja booking laptop lewat website:",
+    laptop: "Laptop", name: "Nama", identityNumber: "No. Identitas",
+    occupation: "Pekerjaan/Perusahaan", rentalStart: "Mulai Sewa", rentalEnd: "Selesai Sewa",
+    days: "hari", estimatedTotal: "Estimasi Total", homeAddress: "Alamat Domisili",
+    rentalAccommodation: "Tempat Tinggal Selama Sewa", roomUnit: "Kamar/Unit",
+    emergencyContact: "Kontak Darurat", address: "Alamat", socialMedia: "Sosial Media",
+    confirmation: "Mohon konfirmasi ya, terima kasih! 🙏", notProvided: "-",
+  },
+  en: {
+    greeting: "Hello TeknoKerja 👋",
+    intro: "I have just booked a laptop through the website:",
+    laptop: "Laptop", name: "Name", identityNumber: "ID Number",
+    occupation: "Occupation/Company", rentalStart: "Rental Start", rentalEnd: "Rental End",
+    days: "days", estimatedTotal: "Estimated Total", homeAddress: "Home Address",
+    rentalAccommodation: "Accommodation During Rental", roomUnit: "Room/Unit",
+    emergencyContact: "Emergency Contact", address: "Address", socialMedia: "Social Media",
+    confirmation: "Please confirm my booking. Thank you! 🙏", notProvided: "-",
+  },
+  ru: {
+    greeting: "Здравствуйте, TeknoKerja 👋",
+    intro: "Я только что забронировал(а) ноутбук через сайт:",
+    laptop: "Ноутбук", name: "Имя", identityNumber: "Номер документа",
+    occupation: "Работа/Компания", rentalStart: "Начало аренды", rentalEnd: "Окончание аренды",
+    days: "дней", estimatedTotal: "Ориентировочная сумма", homeAddress: "Домашний адрес",
+    rentalAccommodation: "Место проживания во время аренды", roomUnit: "Номер комнаты/апартамента",
+    emergencyContact: "Экстренный контакт", address: "Адрес", socialMedia: "Социальные сети",
+    confirmation: "Пожалуйста, подтвердите бронирование. Спасибо! 🙏", notProvided: "-",
+  },
+  zh: {
+    greeting: "您好，TeknoKerja 👋",
+    intro: "我刚刚通过网站预订了一台笔记本电脑：",
+    laptop: "笔记本电脑", name: "姓名", identityNumber: "证件号码",
+    occupation: "职业/公司", rentalStart: "租赁开始", rentalEnd: "租赁结束",
+    days: "天", estimatedTotal: "预估总价", homeAddress: "住址",
+    rentalAccommodation: "租赁期间住宿地点", roomUnit: "房间/单元号",
+    emergencyContact: "紧急联系人", address: "地址", socialMedia: "社交媒体",
+    confirmation: "请确认我的预订，谢谢！🙏", notProvided: "-",
+  },
+};
+
+const dateLocale: Record<Locale, string> = {
+  id: "id-ID",
+  en: "en-GB",
+  ru: "ru-RU",
+  zh: "zh-CN",
+};
+
+// Ganti {placeholder} di teks terjemahan
+const fill = (text: string, vars: Record<string, string | number>) =>
+  text.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ""));
 
 const BookingForm = () => {
   const { id } = useParams();
+  const { t, locale } = useLanguage();
   const { data: laptops, isLoading: laptopsLoading } = useLaptopProducts();
   const laptop = laptops?.find((p) => p.dbId === id);
 
@@ -121,35 +215,42 @@ const BookingForm = () => {
   const [isCheckingConflict, setIsCheckingConflict] = useState(false);
   const [showTermsDialog, setShowTermsDialog] = useState(true);
 
-  const { days, totalPrice, priceLabel } = useMemo(() => {
+  const { days, totalPrice, rate } = useMemo(() => {
     if (!form.startDate || !form.endDate || !laptop) {
-      return { days: 0, totalPrice: 0, priceLabel: "" };
+      return { days: 0, totalPrice: 0, rate: null };
     }
     const start = new Date(`${form.startDate}T${form.startTime || "00:00"}`);
     const end = new Date(`${form.endDate}T${form.endTime || "00:00"}`);
     const diffMs = end.getTime() - start.getTime();
     const diffDays = Math.ceil(diffMs / 86400000);
 
-    if (diffDays <= 0) return { days: 0, totalPrice: 0, priceLabel: "" };
+    if (diffDays <= 0) return { days: 0, totalPrice: 0, rate: null };
 
     let total = 0;
-    let label = "";
+    let r: { kind: "monthly" | "weekly" | "daily"; n: number } | null = null;
 
     if (diffDays >= 30 && laptop.priceMonthly) {
       const months = Math.ceil(diffDays / 30);
       total = laptop.priceMonthly * months;
-      label = `${months}x tarif bulanan`;
+      r = { kind: "monthly", n: months };
     } else if (diffDays >= 7 && laptop.priceWeekly) {
       const weeks = Math.ceil(diffDays / 7);
       total = laptop.priceWeekly * weeks;
-      label = `${weeks}x tarif mingguan`;
+      r = { kind: "weekly", n: weeks };
     } else if (laptop.priceDaily) {
       total = laptop.priceDaily * diffDays;
-      label = `${diffDays}x tarif harian`;
+      r = { kind: "daily", n: diffDays };
     }
 
-    return { days: diffDays, totalPrice: total, priceLabel: label };
+    return { days: diffDays, totalPrice: total, rate: r };
   }, [form.startDate, form.startTime, form.endDate, form.endTime, laptop]);
+
+  // Label tarif buat ditampilkan ke user (ikut bahasa)
+  const priceLabel = rate
+    ? fill(t(`bookingForm.price.${rate.kind}` as TranslationKey), { n: rate.n })
+    : "";
+  // Label tarif Indonesia dipakai untuk catatan internal admin.
+  const priceLabelID = rate ? `${rate.n}x tarif ${rateLabelID[rate.kind]}` : "";
 
   const handleChange = (field: keyof FormData, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -161,48 +262,48 @@ const BookingForm = () => {
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!form.name.trim()) newErrors.name = "Nama wajib diisi";
-    if (!form.idNumber.trim()) newErrors.idNumber = "Nomor identitas wajib diisi";
+    if (!form.name.trim()) newErrors.name = "bookingForm.err.name";
+    if (!form.idNumber.trim()) newErrors.idNumber = "bookingForm.err.idNumber";
 
     if (!form.whatsapp.trim()) {
-      newErrors.whatsapp = "Nomor WhatsApp wajib diisi";
+      newErrors.whatsapp = "bookingForm.err.whatsappRequired";
     } else if (!/^[0-9+\s-]{8,16}$/.test(form.whatsapp.trim())) {
-      newErrors.whatsapp = "Nomor WhatsApp tidak valid";
+      newErrors.whatsapp = "bookingForm.err.whatsappInvalid";
     }
 
-    if (!form.socialMedia.trim()) newErrors.socialMedia = "Link sosial media wajib diisi";
-    if (!form.address.trim()) newErrors.address = "Alamat domisili wajib diisi";
-    if (!form.stayType.trim()) newErrors.stayType = "Tempat tinggal selama sewa wajib diisi";
-    if (!form.stayAddress.trim()) newErrors.stayAddress = "Alamat tempat tinggal wajib diisi";
+    if (!form.socialMedia.trim()) newErrors.socialMedia = "bookingForm.err.social";
+    if (!form.address.trim()) newErrors.address = "bookingForm.err.address";
+    if (!form.stayType.trim()) newErrors.stayType = "bookingForm.err.stayType";
+    if (!form.stayAddress.trim()) newErrors.stayAddress = "bookingForm.err.stayAddress";
 
-    if (!form.emergencyContactName.trim()) newErrors.emergencyContactName = "Nama kontak darurat wajib diisi";
-    if (!form.emergencyContactRelation.trim()) newErrors.emergencyContactRelation = "Hubungan wajib dipilih";
+    if (!form.emergencyContactName.trim()) newErrors.emergencyContactName = "bookingForm.err.ecName";
+    if (!form.emergencyContactRelation.trim()) newErrors.emergencyContactRelation = "bookingForm.err.ecRelation";
 
     if (!form.emergencyContact.trim()) {
-      newErrors.emergencyContact = "Nomor kontak darurat wajib diisi";
+      newErrors.emergencyContact = "bookingForm.err.ecPhoneRequired";
     } else if (!/^[0-9+\s-]{8,16}$/.test(form.emergencyContact.trim())) {
-      newErrors.emergencyContact = "Nomor kontak darurat tidak valid";
+      newErrors.emergencyContact = "bookingForm.err.ecPhoneInvalid";
     }
 
-    if (!form.emergencyContactAddress.trim()) newErrors.emergencyContactAddress = "Alamat kontak darurat wajib diisi";
-    if (!form.emergencyConsent) newErrors.emergencyConsent = "Persetujuan wajib dicentang";
+    if (!form.emergencyContactAddress.trim()) newErrors.emergencyContactAddress = "bookingForm.err.ecAddress";
+    if (!form.emergencyConsent) newErrors.emergencyConsent = "bookingForm.err.consent";
 
-    if (!form.startDate) newErrors.startDate = "Tanggal mulai wajib diisi";
-    if (!form.endDate) newErrors.endDate = "Tanggal selesai wajib diisi";
+    if (!form.startDate) newErrors.startDate = "bookingForm.err.startDate";
+    if (!form.endDate) newErrors.endDate = "bookingForm.err.endDate";
 
     if (form.startDate && form.endDate && form.endDate < form.startDate) {
-      newErrors.dates = "Tanggal selesai harus setelah tanggal mulai";
+      newErrors.dates = "bookingForm.err.dateOrder";
     }
     if (
       form.startDate && form.endDate && form.startDate === form.endDate &&
       form.startTime && form.endTime && form.endTime <= form.startTime
     ) {
-      newErrors.dates = "Jam selesai harus setelah jam mulai";
+      newErrors.dates = "bookingForm.err.timeOrder";
     }
 
     const today = new Date().toISOString().split("T")[0];
     if (form.startDate && form.startDate < today) {
-      newErrors.startDate = "Tanggal mulai tidak boleh di masa lalu";
+      newErrors.startDate = "bookingForm.err.startPast";
     }
 
     setErrors(newErrors);
@@ -234,15 +335,15 @@ const BookingForm = () => {
     e.preventDefault();
 
     if (!laptop) {
-      toast.error("Data laptop tidak ditemukan");
+      toast.error(t("bookingForm.toast.noLaptop"));
       return;
     }
     if (laptop.status !== "ready") {
-      toast.error("Maaf, laptop ini sedang tidak tersedia");
+      toast.error(t("bookingForm.toast.unavailable"));
       return;
     }
     if (!validate()) {
-      toast.error("Mohon lengkapi data yang wajib diisi");
+      toast.error(t("bookingForm.toast.fillRequired"));
       return;
     }
 
@@ -250,22 +351,20 @@ const BookingForm = () => {
 
     const hasConflict = await checkScheduleConflict();
     if (hasConflict) {
-      setErrors((prev) => ({
-        ...prev,
-        dates: "Laptop sudah dibooking pada rentang tanggal ini, silakan pilih tanggal lain",
-      }));
-      toast.error("Jadwal bentrok dengan booking lain");
+      setErrors((prev) => ({ ...prev, dates: "bookingForm.err.conflict" }));
+      toast.error(t("bookingForm.toast.conflict"));
       setIsSubmitting(false);
       return;
     }
 
+    // Catatan internal tetap Indonesia agar konsisten di dashboard admin.
     const combinedNotes = [
       `No. Identitas: ${form.idNumber.trim()}`,
       `Pekerjaan/Perusahaan: ${form.occupation.trim() || "-"}`,
       `No. Kamar/Unit: ${form.roomNumber.trim() || "-"}`,
       form.checkinDate ? `Check-in: ${form.checkinDate}` : null,
       form.checkoutDate ? `Check-out: ${form.checkoutDate}` : null,
-      `Durasi: ${days} hari (${priceLabel})`,
+      `Durasi: ${days} hari (${priceLabelID})`,
       `Estimasi total: ${formatRp(totalPrice)}`,
       form.notes.trim() ? `Catatan: ${form.notes.trim()}` : null,
     ]
@@ -299,6 +398,7 @@ const BookingForm = () => {
         emergency_contact_address: form.emergencyContactAddress.trim(),
         emergency_consent: form.emergencyConsent,
         status: "pending",
+        locale, // bahasa yang dipakai customer, tampil di halaman admin
         source_page: window.location.pathname,
       });
 
@@ -308,62 +408,66 @@ const BookingForm = () => {
       // orang lain checkout laptop yang sama.
       await supabase.from("laptops").update({ status: "rented" }).eq("id", laptop.dbId);
 
-      const formatDateID = (dateStr: string) =>
-        new Date(`${dateStr}T00:00:00`).toLocaleDateString("id-ID", {
+      const formatDate = (dateStr: string) =>
+        new Date(`${dateStr}T00:00:00`).toLocaleDateString(dateLocale[locale], {
           day: "numeric",
           month: "long",
           year: "numeric",
         });
 
+      const copy = bookingWhatsAppCopy[locale];
+      const relation = relationOptions.find((option) => option.value === form.emergencyContactRelation);
+      const relationshipLabel = relation ? t(relation.labelKey) : form.emergencyContactRelation.trim();
+
       const waMessage = [
-        `Halo TeknoKerja \u{1F44B}, saya baru saja booking laptop lewat website:`,
+        `${copy.greeting}, ${copy.intro}`,
         ``,
-        `\u{1F4BB} *Laptop*`,
+        `\u{1F4BB} *${copy.laptop}*`,
         laptop.name,
         ``,
-        `\u{1F64B} *Nama*`,
+        `\u{1F64B} *${copy.name}*`,
         form.name.trim(),
         ``,
-        `\u{1F194} *No. Identitas*`,
+        `\u{1F194} *${copy.identityNumber}*`,
         form.idNumber.trim(),
         ``,
-        `\u{1F3E2} *Pekerjaan/Perusahaan*`,
-        form.occupation.trim() || "-",
+        `\u{1F3E2} *${copy.occupation}*`,
+        form.occupation.trim() || copy.notProvided,
         ``,
-        `\u{1F7E2} *Mulai Sewa*`,
-        `${formatDateID(form.startDate)}, ${form.startTime}`,
+        `\u{1F7E2} *${copy.rentalStart}*`,
+        `${formatDate(form.startDate)}, ${form.startTime}`,
         ``,
-        `\u{1F534} *Selesai Sewa*`,
-        `${formatDateID(form.endDate)}, ${form.endTime} (${days} hari)`,
+        `\u{1F534} *${copy.rentalEnd}*`,
+        `${formatDate(form.endDate)}, ${form.endTime} (${days} ${copy.days})`,
         ``,
-        `\u{1F4B0} *Estimasi Total*`,
+        `\u{1F4B0} *${copy.estimatedTotal}*`,
         formatRp(totalPrice),
         ``,
-        `\u{1F4CD} *Alamat Domisili*`,
+        `\u{1F4CD} *${copy.homeAddress}*`,
         form.address.trim(),
         ``,
-        `\u{1F3E8} *Tempat Tinggal Selama Sewa*`,
-        `${form.stayType.trim()} - ${form.stayAddress.trim()}${form.roomNumber.trim() ? ` (Kamar/Unit: ${form.roomNumber.trim()})` : ""}`,
+        `\u{1F3E8} *${copy.rentalAccommodation}*`,
+        `${form.stayType.trim()} - ${form.stayAddress.trim()}${form.roomNumber.trim() ? ` (${copy.roomUnit}: ${form.roomNumber.trim()})` : ""}`,
         ``,
-        `\u{1F4DE} *Kontak Darurat*`,
-        `${form.emergencyContactName.trim()} (${form.emergencyContactRelation.trim()}) - ${form.emergencyContact.trim()}`,
-        `Alamat: ${form.emergencyContactAddress.trim()}`,
+        `\u{1F4DE} *${copy.emergencyContact}*`,
+        `${form.emergencyContactName.trim()} (${relationshipLabel}) - ${form.emergencyContact.trim()}`,
+        `${copy.address}: ${form.emergencyContactAddress.trim()}`,
         ``,
-        `\u{1F4F1} *Sosial Media*`,
+        `\u{1F4F1} *${copy.socialMedia}*`,
         form.socialMedia.trim(),
         ``,
-        `Mohon konfirmasi ya, terima kasih! \u{1F64F}`,
+        copy.confirmation,
       ].join("\n");
 
       const waUrl = buildWhatsAppUrl(waMessage);
 
-      toast.success("Booking berhasil dikirim! Mengarahkan ke WhatsApp...");
+      toast.success(t("bookingForm.toast.success"));
       setTimeout(() => {
         window.location.href = waUrl;
       }, 800);
     } catch (err) {
       console.error("Booking submit error:", err);
-      toast.error("Gagal mengirim booking, coba lagi ya");
+      toast.error(t("bookingForm.toast.failed"));
       setIsSubmitting(false);
     }
   };
@@ -374,7 +478,7 @@ const BookingForm = () => {
         <Header />
         <main className="container max-w-2xl py-20 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-          <p className="text-muted-foreground mt-4">Memuat data laptop...</p>
+          <p className="text-muted-foreground mt-4">{t("bookingForm.loading")}</p>
         </main>
         <Footer />
       </div>
@@ -387,10 +491,10 @@ const BookingForm = () => {
         <Header />
         <main className="container max-w-2xl py-20 text-center">
           <AlertCircle className="w-10 h-10 text-destructive mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-headline mb-2">Laptop tidak ditemukan</h1>
-          <p className="text-muted-foreground mb-6">Produk yang kamu cari mungkin sudah tidak tersedia.</p>
+          <h1 className="text-2xl font-bold text-headline mb-2">{t("bookingForm.notFoundTitle")}</h1>
+          <p className="text-muted-foreground mb-6">{t("bookingForm.notFoundDesc")}</p>
           <Link to="/laptops" className="btn-whatsapp inline-flex px-6 py-3">
-            Lihat Semua Laptop
+            {t("bookingForm.viewAll")}
           </Link>
         </main>
         <Footer />
@@ -405,7 +509,7 @@ const BookingForm = () => {
       <Header />
 
       <main className="container max-w-2xl py-12">
-        <h1 className="text-3xl font-bold mb-2 text-headline">Book Your Laptop</h1>
+        <h1 className="text-3xl font-bold mb-2 text-headline">{t("bookingForm.title")}</h1>
 
         <div className="flex items-center gap-4 bg-card border border-border rounded-xl p-4 mb-8">
           <img src={laptop.image} alt={laptop.name} className="w-20 h-20 object-contain rounded-lg bg-muted/30" />
@@ -414,7 +518,7 @@ const BookingForm = () => {
             <p className="text-sm text-muted-foreground">{laptop.brand}</p>
             <p className="text-sm font-bold text-primary mt-1">
               {laptop.priceDaily ? formatRp(laptop.priceDaily) : "—"}
-              <span className="text-xs font-normal text-muted-foreground"> /hari</span>
+              <span className="text-xs font-normal text-muted-foreground"> {t("bookingForm.perDay")}</span>
             </p>
           </div>
         </div>
@@ -422,7 +526,7 @@ const BookingForm = () => {
         {isUnavailable && (
           <div className="flex items-center gap-2 bg-destructive/10 text-destructive text-sm font-medium px-4 py-3 rounded-lg mb-6">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            Laptop ini sedang tidak tersedia ({laptop.condition}). Silakan pilih laptop lain.
+            {fill(t("bookingForm.unavailable"), { condition: laptop.condition })}
           </div>
         )}
 
@@ -430,185 +534,184 @@ const BookingForm = () => {
           <form onSubmit={handleSubmit} className="space-y-8" noValidate>
             {/* ===== DATA PENYEWA ===== */}
             <div className="space-y-5">
-              <h2 className="text-lg font-bold text-headline border-b border-border pb-2">Data Penyewa</h2>
+              <h2 className="text-lg font-bold text-headline border-b border-border pb-2">{t("bookingForm.renterData")}</h2>
 
               <div>
-                <Label htmlFor="name">Nama Lengkap *</Label>
+                <Label htmlFor="name">{t("bookingForm.name")} *</Label>
                 <Input id="name" value={form.name} onChange={(e) => handleChange("name", e.target.value)}
-                  placeholder="Nama kamu" className={errors.name ? "border-destructive" : ""} />
-                {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
+                  placeholder={t("bookingForm.namePlaceholder")} className={errors.name ? "border-destructive" : ""} />
+                {errors.name && <p className="text-sm text-destructive mt-1">{t(errors.name)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="idNumber">No. KTP / Paspor / KTM *</Label>
+                <Label htmlFor="idNumber">{t("bookingForm.idNumber")} *</Label>
                 <Input id="idNumber" value={form.idNumber} onChange={(e) => handleChange("idNumber", e.target.value)}
-                  placeholder="Nomor identitas" className={errors.idNumber ? "border-destructive" : ""} />
-                {errors.idNumber && <p className="text-sm text-destructive mt-1">{errors.idNumber}</p>}
+                  placeholder={t("bookingForm.idNumberPlaceholder")} className={errors.idNumber ? "border-destructive" : ""} />
+                {errors.idNumber && <p className="text-sm text-destructive mt-1">{t(errors.idNumber)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="whatsapp">No. HP / WhatsApp *</Label>
+                <Label htmlFor="whatsapp">{t("bookingForm.whatsapp")} *</Label>
                 <Input id="whatsapp" value={form.whatsapp} onChange={(e) => handleChange("whatsapp", e.target.value)}
                   placeholder="" className={errors.whatsapp ? "border-destructive" : ""} />
-                {/* <p className="text-xs text-muted-foreground mt-1">
-                  Gunakan format +62 untuk nomor Indonesia, atau +kode negara Anda untuk nomor luar negeri
-                </p> */}
-                {errors.whatsapp && <p className="text-sm text-destructive mt-1">{errors.whatsapp}</p>}
+                {errors.whatsapp && <p className="text-sm text-destructive mt-1">{t(errors.whatsapp)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="email">Email (opsional)</Label>
+                <Label htmlFor="email">{t("bookingForm.email")}</Label>
                 <Input id="email" type="email" value={form.email} onChange={(e) => handleChange("email", e.target.value)}
-                  placeholder="email@contoh.com" />
+                  placeholder={t("bookingForm.emailPlaceholder")} />
               </div>
 
               <div>
-                <Label htmlFor="socialMedia">Media Sosial *</Label>
+                <Label htmlFor="socialMedia">{t("bookingForm.social")} *</Label>
                 <Input id="socialMedia" value={form.socialMedia} onChange={(e) => handleChange("socialMedia", e.target.value)}
-                  placeholder="Instagram / Facebook / TikTok (link atau username)" className={errors.socialMedia ? "border-destructive" : ""} />
-                {errors.socialMedia && <p className="text-sm text-destructive mt-1">{errors.socialMedia}</p>}
+                  placeholder={t("bookingForm.socialPlaceholder")} className={errors.socialMedia ? "border-destructive" : ""} />
+                {errors.socialMedia && <p className="text-sm text-destructive mt-1">{t(errors.socialMedia)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="address">Alamat Domisili *</Label>
+                <Label htmlFor="address">{t("bookingForm.address")} *</Label>
                 <Textarea id="address" value={form.address} onChange={(e) => handleChange("address", e.target.value)}
-                  placeholder="Alamat KTP / domisili asal" className={errors.address ? "border-destructive" : ""} />
-                {errors.address && <p className="text-sm text-destructive mt-1">{errors.address}</p>}
+                  placeholder={t("bookingForm.addressPlaceholder")} className={errors.address ? "border-destructive" : ""} />
+                {errors.address && <p className="text-sm text-destructive mt-1">{t(errors.address)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="stayType">Tempat Tinggal Selama Masa Sewa *</Label>
+                <Label htmlFor="stayType">{t("bookingForm.stayType")} *</Label>
                 <Input id="stayType" value={form.stayType} onChange={(e) => handleChange("stayType", e.target.value)}
-                  placeholder="Nama Hotel / Villa / Apartemen / Rumah / Kos" className={errors.stayType ? "border-destructive" : ""} />
-                {errors.stayType && <p className="text-sm text-destructive mt-1">{errors.stayType}</p>}
+                  placeholder={t("bookingForm.stayTypePlaceholder")} className={errors.stayType ? "border-destructive" : ""} />
+                {errors.stayType && <p className="text-sm text-destructive mt-1">{t(errors.stayType)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="stayAddress">Alamat Tempat Tinggal Selama Masa Sewa *</Label>
+                <Label htmlFor="stayAddress">{t("bookingForm.stayAddress")} *</Label>
                 <Textarea id="stayAddress" value={form.stayAddress} onChange={(e) => handleChange("stayAddress", e.target.value)}
-                  placeholder="Alamat lengkap tempat tinggal saat ini" className={errors.stayAddress ? "border-destructive" : ""} />
-                {errors.stayAddress && <p className="text-sm text-destructive mt-1">{errors.stayAddress}</p>}
+                  placeholder={t("bookingForm.stayAddressPlaceholder")} className={errors.stayAddress ? "border-destructive" : ""} />
+                {errors.stayAddress && <p className="text-sm text-destructive mt-1">{t(errors.stayAddress)}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="checkinDate">Tanggal Check-in</Label>
+                  <Label htmlFor="checkinDate">{t("bookingForm.checkinDate")}</Label>
                   <Input id="checkinDate" type="date" value={form.checkinDate} onChange={(e) => handleChange("checkinDate", e.target.value)} />
                 </div>
                 <div>
-                  <Label htmlFor="checkoutDate">Tanggal Check-out</Label>
+                  <Label htmlFor="checkoutDate">{t("bookingForm.checkoutDate")}</Label>
                   <Input id="checkoutDate" type="date" value={form.checkoutDate} onChange={(e) => handleChange("checkoutDate", e.target.value)} />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="roomNumber">Nomor Kamar / Unit</Label>
+                <Label htmlFor="roomNumber">{t("bookingForm.roomNumber")}</Label>
                 <Input id="roomNumber" value={form.roomNumber} onChange={(e) => handleChange("roomNumber", e.target.value)}
-                  placeholder="Contoh: 204 / A3" />
+                  placeholder={t("bookingForm.roomNumberPlaceholder")} />
               </div>
 
               <div>
-                <Label htmlFor="occupation">Pekerjaan / Perusahaan</Label>
+                <Label htmlFor="occupation">{t("bookingForm.occupation")}</Label>
                 <Input id="occupation" value={form.occupation} onChange={(e) => handleChange("occupation", e.target.value)}
-                  placeholder="Pekerjaan atau nama perusahaan" />
+                  placeholder={t("bookingForm.occupationPlaceholder")} />
               </div>
             </div>
 
             {/* ===== JADWAL SEWA ===== */}
             <div className="space-y-5">
-              <h2 className="text-lg font-bold text-headline border-b border-border pb-2">Jadwal Sewa</h2>
+              <h2 className="text-lg font-bold text-headline border-b border-border pb-2">{t("bookingForm.scheduleTitle")}</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="startDate">Mulai Sewa *</Label>
+                  <Label htmlFor="startDate">{t("bookingForm.startDate")} *</Label>
                   <Input id="startDate" type="date" value={form.startDate} onChange={(e) => handleChange("startDate", e.target.value)}
                     className={errors.startDate ? "border-destructive" : ""} />
-                  {errors.startDate && <p className="text-sm text-destructive mt-1">{errors.startDate}</p>}
+                  {errors.startDate && <p className="text-sm text-destructive mt-1">{t(errors.startDate)}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="startTime">Jam Mulai *</Label>
+                  <Label htmlFor="startTime">{t("bookingForm.startTime")} *</Label>
                   <Input id="startTime" type="time" value={form.startTime} onChange={(e) => handleChange("startTime", e.target.value)} />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="endDate">Selesai Sewa *</Label>
+                  <Label htmlFor="endDate">{t("bookingForm.endDate")} *</Label>
                   <Input id="endDate" type="date" value={form.endDate} onChange={(e) => handleChange("endDate", e.target.value)}
                     className={errors.endDate ? "border-destructive" : ""} />
-                  {errors.endDate && <p className="text-sm text-destructive mt-1">{errors.endDate}</p>}
+                  {errors.endDate && <p className="text-sm text-destructive mt-1">{t(errors.endDate)}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="endTime">Jam Selesai *</Label>
+                  <Label htmlFor="endTime">{t("bookingForm.endTime")} *</Label>
                   <Input id="endTime" type="time" value={form.endTime} onChange={(e) => handleChange("endTime", e.target.value)} />
                 </div>
               </div>
-              {errors.dates && <p className="text-sm text-destructive -mt-3">{errors.dates}</p>}
+              {errors.dates && <p className="text-sm text-destructive -mt-3">{t(errors.dates)}</p>}
 
               {days > 0 && totalPrice > 0 && (
                 <div className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-4 py-3">
                   <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                   <p className="text-sm text-headline">
-                    <span className="font-semibold">{days} hari</span> ({priceLabel}) — Estimasi total:{" "}
+                    <span className="font-semibold">{days} {t("bookingForm.daysUnit")}</span> ({priceLabel}) — {t("bookingForm.estimateTotal")}:{" "}
                     <span className="font-bold text-primary">{formatRp(totalPrice)}</span>
                   </p>
                 </div>
               )}
 
               <div>
-                <Label htmlFor="notes">Catatan Tambahan (opsional)</Label>
+                <Label htmlFor="notes">{t("bookingForm.notes")}</Label>
                 <Textarea id="notes" value={form.notes} onChange={(e) => handleChange("notes", e.target.value)}
-                  placeholder="Ada permintaan khusus?" />
+                  placeholder={t("bookingForm.notesPlaceholder")} />
               </div>
             </div>
 
             {/* ===== KONTAK DARURAT ===== */}
             <div className="space-y-5">
-              <h2 className="text-lg font-bold text-headline border-b border-border pb-2">Kontak Darurat</h2>
+              <h2 className="text-lg font-bold text-headline border-b border-border pb-2">{t("bookingForm.emergencyTitle")}</h2>
 
               <div>
-                <Label htmlFor="emergencyContactName">Nama Lengkap Kontak Darurat *</Label>
+                <Label htmlFor="emergencyContactName">{t("bookingForm.ecName")} *</Label>
                 <Input id="emergencyContactName" value={form.emergencyContactName}
                   onChange={(e) => handleChange("emergencyContactName", e.target.value)}
-                  placeholder="Nama kontak darurat" className={errors.emergencyContactName ? "border-destructive" : ""} />
-                {errors.emergencyContactName && <p className="text-sm text-destructive mt-1">{errors.emergencyContactName}</p>}
+                  placeholder={t("bookingForm.ecNamePlaceholder")} className={errors.emergencyContactName ? "border-destructive" : ""} />
+                {errors.emergencyContactName && <p className="text-sm text-destructive mt-1">{t(errors.emergencyContactName)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="emergencyContactRelation">Hubungan dengan Penyewa *</Label>
+                <Label htmlFor="emergencyContactRelation">{t("bookingForm.ecRelation")} *</Label>
                 <select
                   id="emergencyContactRelation"
                   value={form.emergencyContactRelation}
                   onChange={(e) => handleChange("emergencyContactRelation", e.target.value)}
                   className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ${errors.emergencyContactRelation ? "border-destructive" : "border-input"}`}
                 >
-                  <option value="">Pilih hubungan</option>
+                  <option value="">{t("bookingForm.ecRelationPlaceholder")}</option>
                   {relationOptions.map((r) => (
-                    <option key={r} value={r}>{r}</option>
+                    <option key={r.value} value={r.value}>{t(r.labelKey)}</option>
                   ))}
                 </select>
-                {errors.emergencyContactRelation && <p className="text-sm text-destructive mt-1">{errors.emergencyContactRelation}</p>}
+                {errors.emergencyContactRelation && <p className="text-sm text-destructive mt-1">{t(errors.emergencyContactRelation)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="emergencyContact">No. HP / WhatsApp Kontak Darurat *</Label>
+                <Label htmlFor="emergencyContact">{t("bookingForm.ecPhone")} *</Label>
                 <Input id="emergencyContact" value={form.emergencyContact}
                   onChange={(e) => handleChange("emergencyContact", e.target.value)}
                   placeholder="+62812xxxxxxx" className={errors.emergencyContact ? "border-destructive" : ""} />
-                {errors.emergencyContact && <p className="text-sm text-destructive mt-1">{errors.emergencyContact}</p>}
+                {errors.emergencyContact && <p className="text-sm text-destructive mt-1">{t(errors.emergencyContact)}</p>}
               </div>
 
               <div>
-                <Label htmlFor="emergencyContactAddress">Alamat Kontak Darurat *</Label>
+                <Label htmlFor="emergencyContactAddress">{t("bookingForm.ecAddress")} *</Label>
                 <Textarea id="emergencyContactAddress" value={form.emergencyContactAddress}
                   onChange={(e) => handleChange("emergencyContactAddress", e.target.value)}
-                  placeholder="Alamat lengkap kontak darurat" className={errors.emergencyContactAddress ? "border-destructive" : ""} />
-                {errors.emergencyContactAddress && <p className="text-sm text-destructive mt-1">{errors.emergencyContactAddress}</p>}
+                  placeholder={t("bookingForm.ecAddressPlaceholder")} className={errors.emergencyContactAddress ? "border-destructive" : ""} />
+                {errors.emergencyContactAddress && <p className="text-sm text-destructive mt-1">{t(errors.emergencyContactAddress)}</p>}
               </div>
 
               <div className="bg-muted/50 rounded-lg p-4 space-y-3">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Dengan mengisi data kontak darurat di atas, Penyewa menyatakan bahwa kontak tersebut merupakan orang yang memiliki hubungan sebagaimana dinyatakan oleh Penyewa. Penyewa bersedia apabila <strong>PIHAK PERTAMA / TeknoKerja menghubungi kontak darurat tersebut</strong> untuk melakukan konfirmasi identitas, hubungan dengan Penyewa, dan/atau hal yang berkaitan dengan unit laptop yang disewa, khususnya apabila Penyewa tidak dapat dihubungi atau terdapat masalah terkait pengembalian unit. Penyewa menyatakan telah memberikan informasi kepada kontak darurat bahwa pihak TeknoKerja dapat melakukan konfirmasi tersebut.
+                  {t("bookingForm.consentBefore")}
+                  <strong>{t("bookingForm.consentBold")}</strong>
+                  {t("bookingForm.consentAfter")}
                 </p>
                 <div className="flex items-start gap-2">
                   <Checkbox
@@ -617,10 +720,10 @@ const BookingForm = () => {
                     onCheckedChange={(checked) => handleChange("emergencyConsent", checked === true)}
                   />
                   <Label htmlFor="emergencyConsent" className="text-xs font-normal leading-relaxed cursor-pointer">
-                    Saya menyatakan data yang saya berikan benar dan menyetujui ketentuan verifikasi kontak darurat di atas. *
+                    {t("bookingForm.consentLabel")} *
                   </Label>
                 </div>
-                {errors.emergencyConsent && <p className="text-sm text-destructive">{errors.emergencyConsent}</p>}
+                {errors.emergencyConsent && <p className="text-sm text-destructive">{t(errors.emergencyConsent)}</p>}
               </div>
             </div>
 
@@ -628,10 +731,10 @@ const BookingForm = () => {
               {isSubmitting || isCheckingConflict ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {isCheckingConflict ? "Mengecek jadwal..." : "Mengirim..."}
+                  {isCheckingConflict ? t("bookingForm.checking") : t("bookingForm.sending")}
                 </>
               ) : (
-                "Kirim & Lanjut ke WhatsApp"
+                t("bookingForm.submit")
               )}
             </Button>
           </form>
@@ -643,10 +746,10 @@ const BookingForm = () => {
       <Dialog open={showTermsDialog} onOpenChange={setShowTermsDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg">Sebelum Lanjut Booking</DialogTitle>
+            <DialogTitle className="text-lg">{t("bookingModal.title")}</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground -mt-2">
-            Biar unit laptopnya langsung kami amankan untuk Kakak, setelah isi form ini nanti admin kami akan follow-up via WhatsApp untuk minta:
+            {t("bookingModal.intro")}
           </p>
           <div className="space-y-4 py-2">
             <div className="flex gap-3">
@@ -654,36 +757,33 @@ const BookingForm = () => {
                 <FileText className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="font-semibold text-sm text-headline">Foto KTP</p>
+                <p className="font-semibold text-sm text-headline">{t("bookingModal.idTitle")}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Untuk mengisi surat perjanjian sewa. KTP asli mohon dibawa saat pengambilan unit.
+                  {t("bookingModal.idDesc")}
                 </p>
               </div>
-
             </div>
             <div className="flex gap-3">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Camera className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <p className="font-semibold text-sm text-headline">Dokumentasi Penyewa & Laptop</p>
+                <p className="font-semibold text-sm text-headline">{t("bookingModal.docTitle")}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Saat pengambilan unit, penyewa yang terdaftar wajib hadir dan
-                  berfoto bersama laptop yang disewa sebagai dokumentasi serah terima.
-                  Pengambilan oleh pihak yang mewakili penyewa tidak diperkenankan.
+                  {t("bookingModal.docDesc")}
                 </p>
               </div>
             </div>
           </div>
           <p className="text-xs text-muted-foreground border-t border-border pt-3">
-            Tenang, ini cuma info awal ya Kak — nggak perlu upload apapun sekarang. Tinggal lanjutkan isi form di bawah 👇
+            {t("bookingModal.note")}
           </p>
           <p className="text-xs text-muted-foreground">
-            🔒 Kami menjamin kerahasiaan data Anda sesuai dengan kebijakan privasi yang berlaku dan hanya digunakan untuk kebutuhan administrasi sewa.
+            {t("bookingModal.privacy")}
           </p>
           <DialogFooter>
             <Button className="w-full" onClick={() => setShowTermsDialog(false)}>
-              Oke, Lanjut Isi Form
+              {t("bookingModal.button")}
             </Button>
           </DialogFooter>
         </DialogContent>

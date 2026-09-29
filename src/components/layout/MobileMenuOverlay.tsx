@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { X, MessageCircle, Users, Phone, Home, HelpCircle, ListChecks, FileText } from "lucide-react";
+import { X, MessageCircle, Users, Phone, Home, HelpCircle, ListChecks, FileText, Laptop } from "lucide-react";
 import logoTeknokerja from "@/assets/logo-teknokerja.png";
 import { trackEvent } from "@/lib/analytics";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -15,7 +15,8 @@ interface MobileMenuOverlayProps {
 const menuItems: { nameKey: TranslationKey; path: string; icon: typeof Home }[] = [
   { nameKey: "nav.home", path: "/", icon: Home },
   { nameKey: "nav.howItWorks", path: "/how-it-works", icon: ListChecks },
-  { nameKey: "nav.faq", path: "/faq", icon: HelpCircle },
+  { nameKey: "nav.stock", path: "/laptop-stock", icon: Laptop },
+  // { nameKey: "nav.faq", path: "/faq", icon: HelpCircle },
   { nameKey: "nav.about", path: "/tentang", icon: Users },
   { nameKey: "nav.contact", path: "/kontak", icon: Phone },
 ];

@@ -40,6 +40,7 @@ import TestimonialsAdmin from "./pages/admin/TestimonialsPage";
 import InstagramAdmin from "./pages/admin/InstagramPage";
 import { WebsiteSettingsPage, SeoSettingsPage } from "./pages/admin/SettingsPages";
 import { LeadsPage, LogsPage } from "./pages/admin/SimpleListPages";
+import AdminDevices from "./pages/admin/DevicesPage";
 
 const queryClient = new QueryClient();
 
@@ -98,6 +99,7 @@ const App = () => (
                 <Route path="bookings" element={<AdminBookings />} />
                 <Route path="calendar" element={<AdminCalendar />} />
                 <Route path="laptops" element={<AdminLaptops />} />
+                <Route path="devices" element={<AdminDevices />} />
                 <Route path="testimonials" element={<TestimonialsAdmin />} />
                 <Route path="instagram" element={<InstagramAdmin />} />
                 <Route path="articles" element={<ArticlesPage />} />
